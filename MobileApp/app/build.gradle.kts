@@ -191,7 +191,7 @@ dependencies {
   implementation("androidx.webkit:webkit:1.13.0")
 
   // TensorFlow Lite / LiteRT for local YOLO inference
-  implementation("org.tensorflow:tensorflow-lite:2.16.1")
+  implementation("org.tensorflow:tensorflow-lite:2.17.0")
   implementation("org.tensorflow:tensorflow-lite-support:0.4.4")
 
   testImplementation("junit:junit:4.13.2")
