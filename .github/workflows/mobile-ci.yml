@@ -38,7 +38,7 @@ jobs:
           java-version-file: MobileApp/.java-version
       - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd
       - run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
-      - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a
+      - uses: gradle/actions/setup-gradle@8da46b539cd8fe6ab27ca75128919a18d757604c
       - name: Source architecture and repository checks
         run: |
           python3 scripts/architecture/check.py
