@@ -1,5 +1,7 @@
 # Run from MobileApp/: .\scripts\release\create_keystore.ps1
-# Uses storePassword, keyPassword and keyAlias already saved in config/keystore.properties.
+# Uses signing credentials, owner (certificate subject DN), and cn (Common Name)
+# already saved in config/keystore.properties.
+# Changing these values NEVER alters an existing certificate.
 # Refuses to overwrite an existing keystore; preserves application signing identity.
 $ErrorActionPreference = 'Stop'
 $root = (Resolve-Path (Join-Path $PSScriptRoot '../..')).Path
@@ -27,6 +29,21 @@ foreach ($name in @('storeFile', 'storePassword', 'keyAlias', 'keyPassword')) {
 if ($values['storePassword'].Length -lt 6 -or $values['keyPassword'].Length -lt 6) {
     throw 'Keytool requires passwords of at least 6 characters.'
 }
+# Owner in keytool output is the full X.509 Subject DN, not the keystore alias.
+# CN is part of that DN. Require both properties to agree before creating a NEW key.
+foreach ($name in @('owner', 'cn')) {
+    if (-not $values.ContainsKey($name) -or [string]::IsNullOrWhiteSpace($values[$name])) {
+        throw "Set $name in config/keystore.properties before creating a new certificate."
+    }
+}
+$ownerDn = $values['owner'].Trim()
+$commonName = $values['cn'].Trim()
+if ($ownerDn -notmatch '(?:^|,\s*)CN\s*=\s*([^,]+)') {
+    throw 'owner must be an X.509 subject DN, for example: owner=CN=Ruslan Karandaev'
+}
+if ($Matches[1].Trim() -cne $commonName) {
+    throw 'owner CN and cn disagree. Use owner=CN=Ruslan Karandaev and cn=Ruslan Karandaev.'
+}
 
 $oldReference = $values['storeFile'] -replace '\\', '/'
 $oldKey = if ([System.IO.Path]::IsPathRooted($oldReference)) { $oldReference } else { Join-Path $root $oldReference }
@@ -45,7 +62,7 @@ try {
     # JKS supports different storePassword and keyPassword; PKCS12 may not.
     & keytool -genkeypair -keystore $keyFile -storetype JKS `
         -alias $values['keyAlias'] -keyalg RSA -keysize 3072 `
-        -validity 10000 -dname 'CN=Fieldfolio, OU=MobileApp, O=Fieldfolio' `
+        -validity 10000 -dname $ownerDn `
         -storepass:env FIELDFOLIO_CREATE_STORE_PASS `
         -keypass:env FIELDFOLIO_CREATE_KEY_PASS -noprompt
     if ($LASTEXITCODE -ne 0) { throw 'keytool failed; keystore.properties was not changed.' }
@@ -61,3 +78,6 @@ $updated = @($lines | ForEach-Object {
 Write-Host 'Created: MobileApp/config/release.keystore'
 Write-Host 'Updated: MobileApp/config/keystore.properties (storeFile only)'
 Write-Warning 'Back up this keystore securely. Losing it can prevent updates to existing installations.'
+
+# Note: to inspect the subject of an EXISTING key:
+# keytool -list -v -keystore .\config\release.keystore
