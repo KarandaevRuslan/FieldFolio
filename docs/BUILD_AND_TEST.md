@@ -1,6 +1,7 @@
 # Build and test from the monorepo
 
-From `Team Project/` (PowerShell uses `\` and `gradlew.bat`):
+From the Git repository root (it may be named `Team Project/` locally; PowerShell
+uses `\` and `gradlew.bat`):
 
 ```sh
 # Android and bundled WebView frontend (JDK 17, Android SDK 36 / build-tools 35)

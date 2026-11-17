@@ -1,4 +1,7 @@
-# Team Project: repository guide
+# Fieldfolio: repository guide
+
+Start with the [main Fieldfolio README](../README.md) for the product overview, launcher icon,
+and setup instructions.
 
 This Git repository hosts three related but independently built workspaces:
 
@@ -8,7 +11,8 @@ This Git repository hosts three related but independently built workspaces:
 | [`Server/`](../Server/) | Spring Boot HTTP API, authentication and image validation | `pom.xml`, `src/main/java/.../App.java`, [`Server/README.md`](../Server/README.md) |
 | [`DetectionTrainProj/`](../DetectionTrainProj/) | Local model training/experiments | `requirements.txt` and project tools; training sources were not provided for this documentation pass |
 
-**GitHub Actions, Dependabot, issue templates and CODEOWNERS belong in the root `.github/`**.
+**GitHub Actions, issue templates and CODEOWNERS belong in the root `.github/`.**
+Dependabot version-update PRs are disabled (no root `dependabot.yml`).
 The Android Gradle project continues to live in `MobileApp/`; the Maven project lives in
 `Server/`. Do not move `app/` or `pom.xml` into the Git root.
 
@@ -20,6 +24,6 @@ The Android Gradle project continues to live in `MobileApp/`; the Maven project 
 - [Server architecture](../Server/docs/ARCHITECTURE.md)
 - [Server configuration](../Server/docs/CONFIGURATION.md)
 
-This is a monorepo infrastructure layer; it does not modify the app's runtime behavior or the
-server's Java classes. The root `README.md` is intentionally left unchanged because its original
-content was not supplied. Add a link from it to `docs/README.md` after reviewing it.
+Fieldfolio is the product name; `Team Project/` may remain the local checkout folder name.
+The repository infrastructure does not change app or server runtime behavior.
+The [root README](../README.md) links to this guide and to the Android and server READMEs.

@@ -1,4 +1,4 @@
-# Contributing to Team Project
+# Contributing to Fieldfolio
 
 Start with [repository architecture](docs/ARCHITECTURE.md) and the relevant project guide.
 Keep Android changes in `MobileApp/`, Java backend changes in `Server/`, and model-training

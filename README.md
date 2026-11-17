@@ -1,506 +1,183 @@
 <h1 align="center">
+  <img src="MobileApp/app/src/main/ic_launcher-playstore.png" width="168" alt="Fieldfolio Android app icon">
   <br>
-  <img src="MobileApp/assets/images/app_icon.png" width="180" alt="GeoInspect app icon">
-  <br>
-  <b>GeoInspect</b>
-  <br>
+  Fieldfolio
 </h1>
 
 <p align="center">
-  Mobile inspection reports, geolocation, weather context and infrastructure damage detection.
+  An Android workspace for field reports, maps, weather, interactive documents, and image analysis.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/platform-Android-brightgreen" alt="Android">
-  <img src="https://img.shields.io/badge/mobile-Kotlin-blue" alt="Kotlin">
-  <img src="https://img.shields.io/badge/UI-Jetpack%20Compose-purple" alt="Jetpack Compose">
-  <img src="https://img.shields.io/badge/backend-Spring%20Boot-brightgreen" alt="Spring Boot">
-  <img src="https://img.shields.io/badge/auth-Firebase-orange" alt="Firebase">
-  <img src="https://img.shields.io/badge/ML-YOLO-red" alt="YOLO">
+  <img src="https://img.shields.io/badge/platform-Android-3DDC84" alt="Android">
+  <img src="https://img.shields.io/badge/language-Kotlin-7F52FF" alt="Kotlin">
+  <img src="https://img.shields.io/badge/UI-Jetpack%20Compose-4285F4" alt="Jetpack Compose">
+  <img src="https://img.shields.io/badge/backend-Spring%20Boot-6DB33F" alt="Spring Boot">
+  <img src="https://img.shields.io/badge/ML-TFLite%20%2B%20YOLO-FF6F00" alt="TFLite and YOLO">
 </p>
 
----
+<p align="center">
+  <a href="MobileApp/README.md">Android app</a> ·
+  <a href="Server/README.md">Server</a> ·
+  <a href="docs/README.md">Documentation</a> ·
+  <a href="docs/ARCHITECTURE.md">Architecture diagrams</a> ·
+  <a href="docs/BUILD_AND_TEST.md">Build &amp; test</a>
+</p>
 
-## Overview
+## What is Fieldfolio?
 
-**GeoInspect** is a client-server system for creating, managing and exporting geotagged infrastructure inspection reports.
+**Fieldfolio** is primarily an Android application for collecting and organizing field data.
+Reports can combine structured notes, photos, audio, coordinates, local weather, clocks,
+model outputs, and interactive **Document** blocks. Reports are stored locally and can be
+exported or imported. The optional backend supports authenticated services and remote image
+inference; local report editing does not depend on an always-available server.
 
-The Android app allows users to create inspection reports linked to map coordinates, attach detection results, view local weather context, export/import report archives and run infrastructure damage detection on images.
+The repository also contains a Spring Boot backend and a separate Python model-training
+workspace. These are **independently built projects**, not modules of the Android Gradle build.
 
-The project consists of three main parts:
+## Highlights
 
-* **MobileApp** — Android client built with Kotlin and Jetpack Compose.
-* **Server** — Spring Boot backend with Firebase authentication, image validation and profile/report-related APIs.
-* **DetectionTrainProj** — YOLO training workspace with datasets, training runs, tools and model artifacts.
+- **Structured reports:** ordered elements, nested folders, media, reusable document resources,
+  import/export, and optional report/folder protection.
+- **Maps and context:** OpenStreetMap maps, location selection, current/last-known positions,
+  weather at a selected point, and clocks with selectable time zones.
+- **Interactive documents:** embedded Acode/CodeMirror editing and a WebView-based Document
+  renderer with a scoped, read-only report virtual file system (VFS).
+- **Image analysis:** a bundled TensorFlow Lite model for on-device inference and support for
+  remote inference through the server, where configured.
+- **User experience:** Jetpack Compose, adaptive layouts, English/Russian localization,
+  and local/guest workflows. Firebase-backed account features require project credentials.
 
----
+For the complete feature list, see the [Android README](MobileApp/README.md).
 
-## Features
-
-### Android app
-
-* Create and edit geotagged inspection reports.
-
-* View reports on a map.
-
-* Store report location, title, content and detection metadata.
-
-* Run image-based infrastructure damage detection.
-
-* Take photos with the camera or choose images from gallery.
-
-* Crop images before detection.
-
-* View detection boxes over images.
-
-* Export and import reports as a folder archive:
-  
-  * JSON report payload,
-  * `reports/` image directory.
-
-* Firebase authentication:
-  
-  * email and password,
-  * Google sign-in,
-  * guest access.
-
-* Profile management:
-  
-  * username changes,
-  * password changes,
-  * custom avatar upload and reset.
-
-* Settings screen:
-  
-  * theme mode,
-  * backend API base URL,
-  * server availability checks,
-  * data import/export,
-  * reset to default reports.
-
-* Local map cache stored separately from temporary image cache.
-
-* Adaptive UI for portrait, landscape and wider layouts.
-
-### Backend
-
-* Spring Boot REST API.
-
-* Firebase ID token authentication.
-
-* User profile avatar endpoints.
-
-* Image upload validation:
-  
-  * MIME type handling,
-  * magic bytes verification,
-  * optional ClamAV validation.
-
-* YOLO inference integration through a Python component.
-
-* Rate limiting and centralized error handling.
-
-### Machine learning
-
-* YOLO-based infrastructure damage detection.
-* Separate training workspace in `DetectionTrainProj`.
-* Python inference runtime under `Server/python-yolo`.
-
----
-
-## Table of Contents
-
-1. [Repository Structure](#repository-structure)
-2. [Downloads](#downloads)
-3. [Getting Started](#getting-started)
-4. [Android App](#android-app)
-5. [Backend](#backend)
-6. [Python YOLO Runtime](#python-yolo-runtime)
-7. [Import and Export Format](#import-and-export-format)
-8. [Security Notes](#security-notes)
-9. [Development Notes](#development-notes)
-10. [Roadmap](#roadmap)
-11. [Contributing](#contributing)
-
----
-
-## Repository Structure
+## Repository layout
 
 ```text
 .
-├── DetectionTrainProj/
-│   ├── best_models/
-│   ├── converted_to_yolo_datasets/
-│   ├── example_commands/
-│   ├── pretrained_models/
-│   ├── runs/
-│   ├── source_dataset/
-│   ├── struct_info/
-│   ├── test_samples/
-│   └── tools/
-│
-├── MobileApp/
+├── MobileApp/           # Fieldfolio Android app and acode-web frontend
 │   ├── app/
-│   │   └── src/
-│   ├── assets/
-│   │   └── images/
-│   │       └── app_icon.png
-│   ├── gradle/
-│   └── template_commands/
-│
-└── Server/
-    ├── clamav/
-    │   ├── certs/
-    │   ├── conf_examples/
-    │   └── database/
-    ├── python-yolo/
-    │   └── best_models/
-    ├── src/
-    │   └── main/
-    ├── ssl/
-    └── tools/
+│   ├── acode-web/
+│   ├── branding/
+│   └── docs/
+├── Server/              # Spring Boot REST API and server-side integration
+│   ├── src/
+│   ├── pom.xml
+│   └── docs/
+├── DetectionTrainProj/  # Python/YOLO training and experimentation
+├── docs/                # Shared documentation and architecture diagrams
+├── .github/workflows/   # CI and optional APK release automation
+└── .gitignore           # Repository-wide exclusions for local/generated files
 ```
 
-### Main folders
+| Component | Start here | Build system |
+|---|---|---|
+| **Android app** | [MobileApp/README.md](MobileApp/README.md) · [Architecture](MobileApp/ARCHITECTURE.md) | Gradle, Kotlin, Compose; Vite for bundled WebView assets |
+| **Server** | [Server/README.md](Server/README.md) · [Server architecture](Server/docs/ARCHITECTURE.md) | Maven, Java 17, Spring Boot |
+| **Model training** | [DetectionTrainProj/](DetectionTrainProj/) · [requirements.txt](DetectionTrainProj/requirements.txt) | Python, YOLO; training is separate from CI |
+| **Repository documentation** | [docs/README.md](docs/README.md) | Markdown and Mermaid |
 
-| Folder                | Description                                                                            |
-| --------------------- | -------------------------------------------------------------------------------------- |
-| `MobileApp/`          | Android application written in Kotlin with Jetpack Compose.                            |
-| `Server/`             | Spring Boot backend, security layer, image validation and YOLO integration.            |
-| `Server/python-yolo/` | Python runtime used by the backend to execute YOLO inference.                          |
-| `Server/clamav/`      | ClamAV files used for optional upload validation.                                      |
-| `DetectionTrainProj/` | Training workspace for datasets, YOLO conversion, training runs and model experiments. |
+## System architecture
 
----
-
-## Downloads
-
-Some runtime artifacts are intentionally not stored directly in the repository.
-
-### Detection model
-
-* File: `best.pt`
-* Type: trained YOLO weights
-* Link: https://drive.google.com/file/d/1yV3CfxLJxuja3cF0HZq4OhF55mBILtA7/view?usp=sharing
-
-Place the model into the path expected by the server or Python YOLO runtime configuration, usually somewhere under:
-
-```text
-Server/python-yolo/best_models/
+```mermaid
+flowchart LR
+    User[Field worker] --> Mobile[Fieldfolio Android]
+    Mobile --> Local[(Room + report files)]
+    Mobile --> Docs[Isolated Document WebView / read-only VFS]
+    Mobile --> TFLite[On-device TFLite]
+    Mobile --> Auth[Firebase Authentication]
+    Mobile -->|Optional authenticated API calls| Server[Spring Boot API]
+    Server --> Security[Upload validation / optional ClamAV]
+    Security --> YOLO[Python YOLO inference service]
+    Training[DetectionTrainProj] -.->|Model artifacts| YOLO
 ```
 
-### ClamAV bundle
+More detailed diagrams and component boundaries:
+[system architecture](docs/ARCHITECTURE.md),
+[Android architecture](MobileApp/ARCHITECTURE.md),
+[Android component map](MobileApp/docs/architecture/MAP.md), and
+[server architecture](Server/docs/ARCHITECTURE.md).
 
-* File: `clamav.zip`
-* Type: ClamAV runtime and signature database bundle
-* Link: https://drive.google.com/file/d/1kS-SzdwvBaiqPAExD1i0zBCbkaFx8DX2/view?usp=sharing
+## Getting started
 
-Use it only if server-side antivirus validation is enabled.
+### Android (main application)
 
----
+Requirements: **JDK 17**, **Android SDK 36**, and **build-tools 35.0.0**. Open
+[`MobileApp/`](MobileApp/) in Android Studio, or build from a terminal:
 
-## Getting Started
-
-### Prerequisites
-
-Install:
-
-* Android Studio
-* JDK 17+
-* Gradle or project Gradle wrapper
-* Python 3.10+
-* Firebase project configuration
-* Optional: ClamAV runtime files
-* Optional: TLS certificates for HTTPS
-
----
-
-## Android App
-
-Open the Android project:
-
-```bash
+```sh
 cd MobileApp
+./gradlew :app:assembleDebug
 ```
 
-Then open `MobileApp/` in Android Studio.
-
-### Firebase config
-
-The Android app requires Firebase configuration for authentication. Usually this means adding:
-
-```text
-MobileApp/app/google-services.json
-```
-
-Make sure this file matches your Firebase project.
-
-### Backend URL
-
-The app supports configurable backend base URL from settings. Use the app settings screen to set the server URL, for example:
-
-```text
-https://your-domain.example
-```
-
-or, for local network testing:
-
-```text
-https://192.168.x.x:port
-```
-
-### Build
-
-From `MobileApp/`:
-
-```bash
-./gradlew assembleDebug
-```
-
-On Windows:
+On Windows PowerShell:
 
 ```powershell
-.\gradlew assembleDebug
+cd MobileApp
+.\gradlew.bat :app:assembleDebug
 ```
 
----
+The debug APK is written to `MobileApp/app/build/outputs/apk/debug/app-debug.apk`.
+The repository includes prebuilt WebView assets and an
+[on-device TFLite model](MobileApp/app/src/main/assets/models/road_damage_yolo_int8.tflite).
+Real Firebase sign-in requires your own **ignored**
+`MobileApp/app/google-services.json`; do not commit it. Guest/offline development builds
+have separate configuration. For source/frontend regeneration and signing, see
+[Android building instructions](MobileApp/docs/BUILDING.md).
 
-## Backend
+### Server (optional)
 
-Go to the server folder:
+The server uses **Java 17 and Maven**. From the repository root:
 
-```bash
-cd Server
+```sh
+mvn -f Server/pom.xml -B -ntp verify
 ```
 
-### Configuration
-
-Check the Spring Boot configuration files under:
-
-```text
-Server/src/main/resources/
-```
-
-Typical configuration values include:
-
-* server port,
-* SSL / HTTPS settings,
-* Firebase credentials or token validation settings,
-* Python YOLO service path / URL,
-* upload limits,
-* ClamAV validation settings.
-
-### Run
-
-Using Maven:
-
-```bash
-./mvnw spring-boot:run
-```
-
-On Windows:
-
-```powershell
-.\mvnw spring-boot:run
-```
-
-Or build and run the JAR:
-
-```bash
-./mvnw package
-java -jar target/*.jar
-```
-
----
-
-## Python YOLO Runtime
-
-The backend delegates inference to a Python YOLO component.
-
-Go to:
-
-```bash
-cd Server/python-yolo
-```
-
-Create a virtual environment:
-
-```bash
-python -m venv .venv
-```
-
-Activate it.
-
-Linux/macOS:
-
-```bash
-source .venv/bin/activate
-```
-
-Windows:
-
-```powershell
-.\.venv\Scripts\activate
-```
-
-Install dependencies if a requirements file is available:
-
-```bash
-pip install -r requirements.txt
-```
-
-Place the YOLO model into:
-
-```text
-Server/python-yolo/best_models/
-```
-
----
-
-## Import and Export Format
-
-GeoInspect exports reports as a directory, not just a standalone JSON file.
-
-### Export all reports
-
-The user selects a parent folder. The app creates:
-
-```text
-geoinspect-export/
-├── geoinspect-export.json
-└── reports/
-    ├── 1.jpg
-    ├── 2.jpg
-    └── ...
-```
-
-### Export one report
-
-The user selects a parent folder. The app creates a report-specific folder:
-
-```text
-geoinspect-report-name/
-├── report-name.json
-└── reports/
-    └── 42.jpg
-```
-
-### Import
-
-For import, select the export folder itself, for example:
-
-```text
-geoinspect-export/
-```
-
-The importer reads:
-
-* the JSON payload,
-* matching images from `reports/`.
-
-Imported reports are inserted as new records. Existing reports are not overwritten.
-
----
-
-## Security Notes
-
-* Firebase Authentication is used for account-based access.
-* Backend requests use Firebase ID tokens.
-* HTTPS/TLS should be enabled for production and real-device testing outside trusted local networks.
-* Uploaded images are validated before inference.
-* Magic bytes validation helps reject files that pretend to be images.
-* ClamAV can be used as an additional validation layer for uploaded files.
-* Temporary image files are stored in dedicated cache subdirectories and can be cleaned safely without touching map cache.
-* osmdroid map tiles are stored outside `cacheDir`, so Android cache cleanup does not repeatedly force tile re-downloads.
-
----
-
-## Development Notes
-
-### Android architecture
-
-The Android app follows a layered structure:
-
-* route-level composables own ViewModels, controllers and side effects;
-* screen/content composables stay mostly stateless;
-* reusable UI components live in shared UI packages;
-* domain models are independent from Room entities and Android framework classes.
-
-### Report image storage
-
-Detection images are not stored as paths in the domain model. Instead, report images are resolved by convention from internal storage:
-
-```text
-filesDir/reports/{inspectionReportId}.{extension}
-```
-
-Supported extensions:
-
-```text
-jpg, jpeg, png, webp
-```
-
-### Local data
-
-The app uses local persistence for:
-
-* inspection reports,
-* detection metadata,
-* settings,
-* persisted runtime access state.
-
-### Backend integration
-
-The mobile app communicates with the backend through REST-style endpoints. The backend validates requests, checks authentication and passes image files to the YOLO inference component.
-
----
-
-## Roadmap
-
-* Improve API documentation with OpenAPI / Swagger.
-* Add more report filtering and search options.
-* Add richer map clustering and report grouping.
-* Add confidence filtering for detection boxes.
-* Improve offline-first behavior.
-* Add automated Android and backend CI checks.
-* Add screenshots and demo GIFs to this README.
-* Add release build instructions for Android APK/AAB.
-* Add deployment guide for backend + Python YOLO runtime.
-
----
-
-## Contributing
-
-1. Fork the repository.
-
-2. Create a feature branch:
-   
-   ```bash
-   git checkout -b feature/my-change
-   ```
-
-3. Keep commits focused and descriptive.
-
-4. Run the relevant build before opening a pull request.
-
-5. Open a pull request to `main`.
-
----
-
-## Screenshots
-
-| Home                                                | Map                                                | Edit report                                         |
-| --------------------------------------------------- | -------------------------------------------------- | --------------------------------------------------- |
-| <img src="docs/images/home_screen.jpg" width="260"> | <img src="docs/images/map_screen.jpg" width="260"> | <img src="docs/images/edit_screen.jpg" width="260"> |
-
----
-
-## License
-
-This project is licensed under the MIT License — see `LICENSE` for details.
-
----
-
-<p align="center">
-  Made with Kotlin, Jetpack Compose, Spring Boot and YOLO.
-</p>
+This checks compilation and packaging, **not** a running integration with Firebase,
+PostgreSQL, ClamAV, or YOLO. The supplied server project has no Maven wrapper, so use
+an installed `mvn`, not `./mvnw`.
+
+To configure and run it, use the [server README](Server/README.md) and
+[server configuration guide](Server/docs/CONFIGURATION.md). Keep credentials, TLS keys,
+model weights and local application configuration out of Git.
+
+### Model training and optional assets
+
+`DetectionTrainProj/` contains a separate Python/YOLO training workspace. See its
+[requirements](DetectionTrainProj/requirements.txt) and tools; CI does not train models.
+The original repository README also provided optional external assets:
+
+- [YOLO `best.pt` weights](https://drive.google.com/file/d/1yV3CfxLJxuja3cF0HZq4OhF55mBILtA7/view?usp=sharing)
+- [ClamAV runtime/data bundle](https://drive.google.com/file/d/1kS-SzdwvBaiqPAExD1i0zBCbkaFx8DX2/view?usp=sharing)
+
+These downloads are **not required to build the Android APK**. Configure server-side
+inference and antivirus explicitly; external download availability is not verified here.
+
+## Documentation and project files
+
+| Topic | Links |
+|---|---|
+| Repository overview | [Docs index](docs/README.md) · [Architecture & diagrams](docs/ARCHITECTURE.md) |
+| Build, tests and CI | [Build & test](docs/BUILD_AND_TEST.md) · [Workflows](docs/WORKFLOWS.md) · [Android testing](MobileApp/docs/TESTING.md) |
+| Android internals | [MobileApp README](MobileApp/README.md) · [Architecture](MobileApp/ARCHITECTURE.md) · [Design decisions](MobileApp/docs/architecture/DECISIONS.md) |
+| Interactive Document API | [VFS / Document API (EN)](MobileApp/docs/api/document-en.md) · [RU](MobileApp/docs/api/document-ru.md) |
+| Server | [Server README](Server/README.md) · [Architecture](Server/docs/ARCHITECTURE.md) · [Configuration](Server/docs/CONFIGURATION.md) |
+| Releases | [Android releasing](MobileApp/docs/RELEASING.md) · [GitHub workflows](.github/workflows/) |
+| Repository policies | [Contributing](CONTRIBUTING.md) · [Security](SECURITY.md) · [Git hygiene](docs/REPOSITORY_HYGIENE.md) |
+| Licensing and provenance | [MIT license](MobileApp/LICENSE.md) · [Third-party notices](MobileApp/THIRD_PARTY_NOTICES.md) · [Model provenance](MobileApp/docs/MODEL_PROVENANCE.md) |
+
+The image above is the **actual Android launcher icon** checked into the project;
+its [editable SVG source](MobileApp/branding/fieldfolio.svg) is also available. The old
+README's screenshot paths were removed because those screenshot files are not included
+in the repository snapshot.
+
+## Contributing and security
+
+Please read [CONTRIBUTING.md](CONTRIBUTING.md) before opening a pull request and
+[SECURITY.md](SECURITY.md) before reporting a vulnerability. Shared GitHub Actions and
+issue templates live in the root [`.github/`](.github/). Dependabot version-update pull
+requests are disabled; dependency updates are reviewed manually.
+
+Fieldfolio-authored code is covered by the [MIT license](MobileApp/LICENSE.md).
+Third-party software and bundled-model terms are recorded in the
+[notices](MobileApp/THIRD_PARTY_NOTICES.md) and
+[model provenance](MobileApp/docs/MODEL_PROVENANCE.md).

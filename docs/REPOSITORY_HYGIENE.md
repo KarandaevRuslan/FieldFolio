@@ -8,7 +8,9 @@ Firebase credentials, YOLO outputs and local runtime data.
 
 Important exceptions: `MobileApp/acode-web/vendor/*.tgz` is a required bundled dependency;
 `MobileApp/acode-web/third_party/acode/patches/*.patch` contains maintained source patches,
-and checked-in ZIP test fixtures under test resource/fixture directories are allowed.
+checked-in ZIP test fixtures under test resource/fixture directories are allowed, and
+`MobileApp/app/src/main/assets/models/road_damage_yolo_int8.tflite` is the one allowed
+bundled on-device TensorFlow Lite model. Other exported `.tflite` files are ignored.
 `.gitignore` does **not** remove already tracked files.
 
 ```powershell
@@ -25,5 +27,5 @@ certificates; `git rm --cached` stops future tracking but does **not** erase pas
 If secrets were committed, revoke/rotate them and coordinate a history cleanup separately.
 Do not run `git clean -fdx`, `git reset --hard`, or mass `git rm` to install this package.
 
-The root `README.md` is not replaced because the original root README was not included in
-the user-provided materials. The root documentation landing page is `docs/README.md`.
+The [root README](../README.md) describes the application and links to the
+[repository documentation](README.md).

@@ -10,6 +10,11 @@ spec.loader.exec_module(check)
 
 
 class TrackedFilesTest(unittest.TestCase):
+    def test_automatic_dependabot_prs_disabled(self):
+        root = SCRIPT.parents[1]
+        self.assertFalse((root / '.github/dependabot.yml').exists())
+        self.assertFalse((root / 'MobileApp/.github/dependabot.yml').exists())
+
     def test_generated_and_secret_inputs_rejected(self):
         for path in (
             'MobileApp/Fieldfolio-2.2.0-full-source.zip',
@@ -20,6 +25,8 @@ class TrackedFilesTest(unittest.TestCase):
             'Server/python-yolo/.venv/pyvenv.cfg',
             'DetectionTrainProj/runs/train/results.csv',
             'DetectionTrainProj/best_models/model.pt',
+            'DetectionTrainProj/exports/experimental.tflite',
+            'MobileApp/app/src/main/assets/models/unapproved.tflite',
             'MobileApp/.github/workflows/ci.yml',
         ):
             with self.subTest(path=path):

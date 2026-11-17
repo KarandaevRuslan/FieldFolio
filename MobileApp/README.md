@@ -7,9 +7,10 @@ Observable Notebook Kit and Nexus Core in an isolated WebView renderer.
 
 Maintained by [KarandaevRuslan](https://github.com/KarandaevRuslan/).
 
-This checkout is also maintained under the monorepo `Team Project/MobileApp`.
-Shared GitHub workflows, issue templates and Dependabot now live one directory above, in
-[`../.github/`](../.github/). See the [team repository guide](../docs/README.md).
+The **Fieldfolio** Android client lives in `MobileApp/` in a shared Git repository.
+GitHub workflows and issue templates live in the repository-root
+[`.github/`](../.github/); automated Dependabot PRs are disabled.
+See the [repository guide](../docs/README.md).
 
 ## Capabilities
 

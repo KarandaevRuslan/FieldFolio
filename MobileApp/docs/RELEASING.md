@@ -10,7 +10,8 @@ push commits/tags, configure secrets or run GitHub Actions remotely.
 boundaries/hygiene, repository tests, the real web runtime, frontend rebuilds, isolated Android
 regressions, lint, debug/instrumentation APK compilation, Room schema drift and Notebook Kit/Nexus
 integration. It uploads check reports and a debug APK. PR verification does not require secrets.
-Actions are pinned to commit IDs and Dependabot can propose reviewed updates.
+Actions are pinned to commit IDs. Review and update their versions manually; automatic
+Dependabot pull requests are disabled for this repository.
 
 ## APK from a new tag
 

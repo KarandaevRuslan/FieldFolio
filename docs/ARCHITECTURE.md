@@ -1,4 +1,4 @@
-# Team Project architecture
+# Fieldfolio architecture
 
 The repository is a **monorepo, not a single build**. Android is built with Gradle; the
 Spring Boot API with Maven; the training workspace has its own Python requirements.
@@ -30,11 +30,11 @@ are separate from local report persistence.
 
 ```mermaid
 flowchart TB
-    Repo[Team Project Git root]
+    Repo[Fieldfolio monorepo / Git root]
     Repo --> Mobile[MobileApp: Gradle + Acode / Vite]
     Repo --> Server[Server: Maven + Spring Boot]
     Repo --> Training[DetectionTrainProj: Python training]
-    Repo --> Workflows[.github: CI, issues, Dependabot, release]
+    Repo --> Workflows[.github: CI, issues, release]
     Repo --> Docs[docs: shared architecture and policies]
     Mobile --> ClientTests[Android, JVM, JS and Python checks]
     Server --> MavenTests[Maven verify; add JUnit tests when available]

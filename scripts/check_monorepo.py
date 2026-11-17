@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Non-destructive policy checks for the Team Project monorepo."""
+"""Non-destructive policy checks for the Fieldfolio monorepo."""
 from pathlib import Path
 import subprocess
 import sys
@@ -14,7 +14,8 @@ REQUIRED = (
 FORBIDDEN_NAMES = {'google-services.json', 'firebase-service-account.json',
                    'application.yml', 'local.properties', 'keystore.p12', '.env'}
 FORBIDDEN_SUFFIXES = {'.patch', '.apk', '.aab', '.p12', '.pfx', '.jks', '.keystore', '.pem',
-                      '.key', '.pt', '.pth', '.npy', '.npz', '.onnx', '.rar', '.7z'}
+                      '.key', '.pt', '.pth', '.tflite', '.npy', '.npz', '.onnx', '.rar', '.7z'}
+BUNDLED_TFLITE = 'MobileApp/app/src/main/assets/models/road_damage_yolo_int8.tflite'
 ARCHIVE_SUFFIXES = {'.zip', '.tar', '.gz', '.tgz'}
 
 
@@ -32,6 +33,8 @@ def forbidden_path(name: str) -> bool:
     if path.name in FORBIDDEN_NAMES or (path.name.startswith('.env.') and path.name != '.env.example'):
         return True
     if path.suffix.lower() == '.patch' and path.as_posix().startswith('MobileApp/acode-web/third_party/acode/patches/'):
+        return False
+    if path.as_posix() == BUNDLED_TFLITE:
         return False
     if path.suffix.lower() in FORBIDDEN_SUFFIXES:
         return True

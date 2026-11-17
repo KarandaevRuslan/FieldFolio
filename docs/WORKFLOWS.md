@@ -31,10 +31,13 @@ otherwise some clean PRs cannot be merged.
 1. Move `.github` **to the root** using the supplied patch.
 2. Configure GitHub Actions permissions (read-only by default); create `release` environment
    and secrets only when signed releases are needed.
-3. Review `CODEOWNERS`, Dependabot updates and the default branch name (`main`).
+3. Review `CODEOWNERS` and the default branch name (`main`). Dependabot version-update
+   PRs are disabled by removing `.github/dependabot.yml`. Existing PRs require manual closure;
+   if GitHub still opens security-update PRs, turn off **Dependabot security updates** in the
+   repository's GitHub security settings separately.
 4. Use Actions -> select `Repository policy and docs`, `MobileApp CI`, and `Server CI` to
    run the first workflows manually after pushing changes.
-5. Add a link from your existing root `README.md` to `docs/README.md`.
+5. Keep the [root README](../README.md) and this workflow guide in sync when commands change.
 
 ## External services
 
