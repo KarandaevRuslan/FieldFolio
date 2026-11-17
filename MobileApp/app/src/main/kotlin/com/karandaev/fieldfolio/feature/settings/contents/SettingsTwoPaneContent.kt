@@ -20,8 +20,8 @@ import com.karandaev.fieldfolio.feature.settings.components.sections.SettingsAbo
 import com.karandaev.fieldfolio.feature.settings.components.sections.SettingsAccountSection
 import com.karandaev.fieldfolio.feature.settings.components.sections.SettingsAppearanceSection
 import com.karandaev.fieldfolio.feature.settings.components.sections.SettingsAudioSection
-import com.karandaev.fieldfolio.feature.settings.components.sections.SettingsMapSection
 import com.karandaev.fieldfolio.feature.settings.components.sections.SettingsDataSection
+import com.karandaev.fieldfolio.feature.settings.components.sections.SettingsMapSection
 import com.karandaev.fieldfolio.feature.settings.components.sections.SettingsServerSection
 import com.karandaev.fieldfolio.feature.settings.components.sections.SettingsTextSection
 import com.karandaev.fieldfolio.feature.settings.state.ServerAvailabilityState

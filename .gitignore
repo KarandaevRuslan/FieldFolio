@@ -198,3 +198,6 @@ DetectionTrainProj/**/*.safetensors
 # Local TFLite exports are generated files; the bundled Fieldfolio model is source.
 *.tflite
 !MobileApp/app/src/main/assets/models/road_damage_yolo_int8.tflite
+
+# Local Kotlin formatter JARs
+/MobileApp/scripts/ktfmt-*-with-dependencies.jar

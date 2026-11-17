@@ -33,8 +33,8 @@ class OpenMeteoWeatherProvider(
    * Cached data is returned when available and not expired.
    */
   // The lock is per rounded coordinate: duplicate widgets and Clock's zone lookup share a fetch.
-  private val requestLocks = java.util.concurrent.ConcurrentHashMap<WeatherCacheKey,
-    kotlinx.coroutines.sync.Mutex>()
+  private val requestLocks =
+    java.util.concurrent.ConcurrentHashMap<WeatherCacheKey, kotlinx.coroutines.sync.Mutex>()
   private val networkSlots = kotlinx.coroutines.sync.Semaphore(3)
 
   override suspend fun refreshWeather(latitude: Double, longitude: Double): Result<WeatherInfo> =
@@ -43,15 +43,23 @@ class OpenMeteoWeatherProvider(
   override suspend fun getWeather(latitude: Double, longitude: Double): Result<WeatherInfo> =
     fetch(latitude, longitude, force = false)
 
-  private suspend fun fetch(latitude: Double, longitude: Double, force: Boolean): Result<WeatherInfo> {
+  private suspend fun fetch(
+    latitude: Double,
+    longitude: Double,
+    force: Boolean,
+  ): Result<WeatherInfo> {
     val key = WeatherCacheKey.from(latitude, longitude)
     val mutex = requestLocks.computeIfAbsent(key) { kotlinx.coroutines.sync.Mutex() }
     return mutex.withLock {
       try {
-        if (!force) cache.get(key)?.let { return@withLock Result.success(it) }
-        val result = networkSlots.withPermit {
-          api.getForecast(latitude = latitude, longitude = longitude).toWeatherInfo()
-        }
+        if (!force)
+          cache.get(key)?.let {
+            return@withLock Result.success(it)
+          }
+        val result =
+          networkSlots.withPermit {
+            api.getForecast(latitude = latitude, longitude = longitude).toWeatherInfo()
+          }
         cache.put(key, result)
         Result.success(result)
       } catch (cancelled: kotlinx.coroutines.CancellationException) {

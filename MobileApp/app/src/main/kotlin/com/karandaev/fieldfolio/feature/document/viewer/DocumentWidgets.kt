@@ -4,12 +4,12 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.platform.testTag
-import com.karandaev.fieldfolio.core.di.rememberAppServices
-import com.karandaev.fieldfolio.core.datarefresh.rememberDeviceFix
 import com.karandaev.fieldfolio.core.datarefresh.RegisterDeviceWeatherRefresh
-import com.karandaev.fieldfolio.core.datarefresh.rememberWeatherReading
-import com.karandaev.fieldfolio.core.datarefresh.rememberWeatherPoint
+import com.karandaev.fieldfolio.core.datarefresh.rememberDeviceFix
 import com.karandaev.fieldfolio.core.datarefresh.rememberDeviceTimeZone
+import com.karandaev.fieldfolio.core.datarefresh.rememberWeatherPoint
+import com.karandaev.fieldfolio.core.datarefresh.rememberWeatherReading
+import com.karandaev.fieldfolio.core.di.rememberAppServices
 import com.karandaev.fieldfolio.core.document.*
 import com.karandaev.fieldfolio.core.domain.model.location.MapPoint
 import com.karandaev.fieldfolio.core.ui.text.*
@@ -55,9 +55,13 @@ fun DocumentLiveWidget(
       else {
         Text("${point.latitude}, ${point.longitude}", style = MaterialTheme.typography.bodyLarge)
         if (liveDevice != null && !liveDevice.isCurrent()) {
-          Text(androidx.compose.ui.res.stringResource(com.karandaev.fieldfolio.R.string.map_my_last_location),
+          Text(
+            androidx.compose.ui.res.stringResource(
+              com.karandaev.fieldfolio.R.string.map_my_last_location
+            ),
             style = MaterialTheme.typography.labelSmall,
-            color = MaterialTheme.colorScheme.error)
+            color = MaterialTheme.colorScheme.error,
+          )
         }
       }
     }
@@ -72,11 +76,12 @@ fun DocumentLiveWidget(
       // A measured-but-old device fix is still a usable WEATHER destination. We show its
       // age/status separately instead of treating missing live GPS as missing coordinates.
       // Keeping this subscription active also lets the shared weather cache load the saved point.
-      val reading = rememberWeatherReading(
-        weatherPoint,
-        active = weatherPoint != null,
-        includeInPull = !node.deviceLocation,
-      )
+      val reading =
+        rememberWeatherReading(
+          weatherPoint,
+          active = weatherPoint != null,
+          includeInPull = !node.deviceLocation,
+        )
       val place =
         com.karandaev.fieldfolio.core.location.LocatedPlace(
           com.karandaev.fieldfolio.core.location.AppLocation(point.latitude, point.longitude),
@@ -85,12 +90,15 @@ fun DocumentLiveWidget(
       val state =
         if (reading.error && reading.value == null)
           com.karandaev.fieldfolio.feature.weather.state.WeatherUiState.Error(tr("error"))
-        else reading.value?.let {
-          com.karandaev.fieldfolio.feature.weather.state.WeatherUiState.Success(it)
-        } ?: com.karandaev.fieldfolio.feature.weather.state.WeatherUiState.Loading
+        else
+          reading.value?.let {
+            com.karandaev.fieldfolio.feature.weather.state.WeatherUiState.Success(it)
+          } ?: com.karandaev.fieldfolio.feature.weather.state.WeatherUiState.Loading
       if (node.deviceLocation && liveDevice?.isCurrent() != true) {
         Text(
-          androidx.compose.ui.res.stringResource(com.karandaev.fieldfolio.R.string.map_my_last_location),
+          androidx.compose.ui.res.stringResource(
+            com.karandaev.fieldfolio.R.string.map_my_last_location
+          ),
           style = MaterialTheme.typography.labelSmall,
           color = MaterialTheme.colorScheme.error,
         )
@@ -103,18 +111,24 @@ fun DocumentLiveWidget(
           delay(if (reading.nextManualAllowedAtMillis > ageNow) 1_000 else 60_000)
         }
       }
-      val weatherStatus = when {
-        reading.error && reading.value != null ->
-          androidx.compose.ui.res.stringResource(com.karandaev.fieldfolio.R.string.weather_previous_after_error)
-        reading.isStale(ageNow) ->
-          androidx.compose.ui.res.stringResource(com.karandaev.fieldfolio.R.string.weather_previous_stale)
-        else -> null
-      }
+      val weatherStatus =
+        when {
+          reading.error && reading.value != null ->
+            androidx.compose.ui.res.stringResource(
+              com.karandaev.fieldfolio.R.string.weather_previous_after_error
+            )
+          reading.isStale(ageNow) ->
+            androidx.compose.ui.res.stringResource(
+              com.karandaev.fieldfolio.R.string.weather_previous_stale
+            )
+          else -> null
+        }
       com.karandaev.fieldfolio.feature.shared.components.cards.WeatherCard(
         com.karandaev.fieldfolio.feature.map.location.LocationUiState.Success(place),
         state,
         modifier = androidx.compose.ui.Modifier.fillMaxWidth().testTag("document-weather-widget"),
-        isRefreshing = reading.isRefreshing || (node.deviceLocation && liveDevice?.isRefreshing == true),
+        isRefreshing =
+          reading.isRefreshing || (node.deviceLocation && liveDevice?.isRefreshing == true),
         refreshEnabled = ageNow >= reading.nextManualAllowedAtMillis,
         statusText = weatherStatus,
         onRetry = {

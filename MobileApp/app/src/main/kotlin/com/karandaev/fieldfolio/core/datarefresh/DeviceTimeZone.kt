@@ -24,17 +24,17 @@ fun rememberDeviceTimeZone(): ZoneId {
   val owner = LocalLifecycleOwner.current
   var zone by remember { mutableStateOf(ZoneId.systemDefault()) }
   DisposableEffect(context, owner) {
-    val receiver = object : BroadcastReceiver() {
-      override fun onReceive(context: Context?, intent: Intent?) {
-        zone = ZoneId.systemDefault()
+    val receiver =
+      object : BroadcastReceiver() {
+        override fun onReceive(context: Context?, intent: Intent?) {
+          zone = ZoneId.systemDefault()
+        }
       }
-    }
     val filter = IntentFilter(Intent.ACTION_TIMEZONE_CHANGED)
     if (Build.VERSION.SDK_INT >= 33) {
       context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
     } else {
-      @Suppress("DEPRECATION")
-      context.registerReceiver(receiver, filter)
+      @Suppress("DEPRECATION") context.registerReceiver(receiver, filter)
     }
     val observer = LifecycleEventObserver { _, event ->
       if (event == Lifecycle.Event.ON_RESUME) zone = ZoneId.systemDefault()

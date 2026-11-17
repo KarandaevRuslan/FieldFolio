@@ -14,9 +14,11 @@ import kotlinx.coroutines.sync.Mutex
 /** An independently refreshable UI surface (report, editor preview, or nested dialog). */
 class RefreshScope {
   private data class Request(val key: Any, val run: suspend () -> Unit)
+
   private val registrations = androidx.compose.runtime.mutableStateMapOf<Any, Request>()
   val hasRefreshableNeeds: Boolean
     get() = registrations.isNotEmpty()
+
   private val mutex = Mutex()
   var refreshing by mutableStateOf(false)
     private set
@@ -46,8 +48,7 @@ class RefreshScope {
 
 val LocalRefreshScope = compositionLocalOf<RefreshScope?> { null }
 
-@Composable
-fun rememberRefreshScope(): RefreshScope = remember { RefreshScope() }
+@Composable fun rememberRefreshScope(): RefreshScope = remember { RefreshScope() }
 
 /** A registration is not a request: fast Lazy list scrolling only changes membership. */
 @Composable

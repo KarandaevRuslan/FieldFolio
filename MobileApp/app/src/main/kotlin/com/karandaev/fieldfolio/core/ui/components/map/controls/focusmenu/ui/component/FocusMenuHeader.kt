@@ -2,9 +2,9 @@ package com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.ui.co
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.LocationOn
 import androidx.compose.material.icons.filled.Refresh
@@ -47,10 +47,11 @@ internal fun FocusMenuHeader(actions: List<OsmFocusPointAction> = emptyList()) {
           CircularProgressIndicator(modifier = Modifier.size(20.dp), strokeWidth = 2.dp)
         } else {
           Icon(
-            imageVector = when (action.icon) {
-              OsmFocusPointActionIcon.RefreshLocation -> Icons.Default.Refresh
-              OsmFocusPointActionIcon.GrantLocation -> Icons.Default.LocationOn
-            },
+            imageVector =
+              when (action.icon) {
+                OsmFocusPointActionIcon.RefreshLocation -> Icons.Default.Refresh
+                OsmFocusPointActionIcon.GrantLocation -> Icons.Default.LocationOn
+              },
             contentDescription = action.title,
           )
         }

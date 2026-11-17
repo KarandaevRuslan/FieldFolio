@@ -6,13 +6,12 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.rememberCoroutineScope
 import com.karandaev.fieldfolio.core.datarefresh.DeviceFixState
 import com.karandaev.fieldfolio.core.datarefresh.rememberDeviceFix
 import com.karandaev.fieldfolio.core.di.rememberAppServices
-import kotlinx.coroutines.launch
 import com.karandaev.fieldfolio.core.location.LocatedPlace
 import com.karandaev.fieldfolio.core.location.place.PlaceNameProvider
 import com.karandaev.fieldfolio.core.location.resolver.LocationResolver
@@ -21,6 +20,7 @@ import com.karandaev.fieldfolio.feature.map.location.LocationController
 import com.karandaev.fieldfolio.feature.map.location.LocationResolveMode
 import com.karandaev.fieldfolio.feature.map.location.LocationUiState
 import com.karandaev.fieldfolio.feature.map.location.rememberLocationController
+import kotlinx.coroutines.launch
 
 private const val LastLocatedPlaceMaxAgeMillis = 24 * 60 * 60 * 1_000L
 
@@ -47,8 +47,8 @@ internal constructor(
   /**
    * Requests the map to focus on the current location target.
    *
-   * The shared resource coordinator handles active device polling.
-   * The actual focus target is provided to the map through [locationState].
+   * The shared resource coordinator handles active device polling. The actual focus target is
+   * provided to the map through [locationState].
    */
   fun focusLocation() {
     focusLocationAction()
@@ -92,7 +92,9 @@ fun rememberMapLocationController(
     locationController = locationController,
     fallbackLocatedPlace = lastLocatedPlace,
     sharedFix = sharedFix,
-    sharedFocus = { coroutineScope.launch { app.resourceCoordinator.refreshLocation(force = true) } },
+    sharedFocus = {
+      coroutineScope.launch { app.resourceCoordinator.refreshLocation(force = true) }
+    },
   )
 }
 
@@ -148,18 +150,22 @@ private fun rememberMapLocationController(
   val actualLocationState = locationController.locationState
 
   // Main map follows the same GPS snapshot as document widgets and focus menus.
-  val currentShared = sharedFix?.location?.takeIf {
-    val age = System.currentTimeMillis() - (it.timestampMillis ?: 0L)
-    age in 0..LastLocatedPlaceMaxAgeMillis
-  }
-  val sharedUi = currentShared?.let {
-    LocationUiState.Success(
-      data = LocatedPlace(it, fallbackLocatedPlace?.placeName.orEmpty()),
-      refreshId = it.timestampMillis ?: 0L,
-    )
-  }
+  val currentShared =
+    sharedFix?.location?.takeIf {
+      val age = System.currentTimeMillis() - (it.timestampMillis ?: 0L)
+      age in 0..LastLocatedPlaceMaxAgeMillis
+    }
+  val sharedUi =
+    currentShared?.let {
+      LocationUiState.Success(
+        data = LocatedPlace(it, fallbackLocatedPlace?.placeName.orEmpty()),
+        refreshId = it.timestampMillis ?: 0L,
+      )
+    }
   val displayLocationState =
-    (sharedUi ?: actualLocationState).withFallbackLocatedPlace(fallbackLocatedPlace = fallbackLocatedPlace)
+    (sharedUi ?: actualLocationState).withFallbackLocatedPlace(
+      fallbackLocatedPlace = fallbackLocatedPlace
+    )
 
   val fallbackSuccessState = displayLocationState as? LocationUiState.Success
   val actualSuccessState = actualLocationState as? LocationUiState.Success

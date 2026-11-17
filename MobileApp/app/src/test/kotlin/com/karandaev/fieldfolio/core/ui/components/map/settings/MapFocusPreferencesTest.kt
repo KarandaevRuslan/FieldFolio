@@ -17,7 +17,8 @@ class MapFocusPreferencesTest {
 
   @After fun restoreDefault() = MapFocusPreferences.setShowCurrentMapCenter(context, true)
 
-  @Test fun mapCenterIsShownByDefaultAndPersistentlyToggled() {
+  @Test
+  fun mapCenterIsShownByDefaultAndPersistentlyToggled() {
     context.getSharedPreferences("map_view", Context.MODE_PRIVATE).edit().clear().commit()
     assertTrue(MapFocusPreferences.showCurrentMapCenter(context))
     MapFocusPreferences.setShowCurrentMapCenter(context, false)

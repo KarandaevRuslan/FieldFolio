@@ -1,18 +1,18 @@
 package com.karandaev.fieldfolio.feature.shared.components.cards
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cloud
 import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -109,60 +109,68 @@ fun WeatherCard(
             val uiModel = weatherState.toWeatherCardUiModel(locatedPlace = locationState.data)
 
             Column {
-            AppCardContent(
-              title = uiModel.temperature,
-              subtitle = stringResource(uiModel.descriptionRes),
-              supportingText = uiModel.locationText,
-              verticalAlignment = Alignment.CenterVertically,
-              horizontalSpacing = 16.dp,
-              titleStyle =
-                if (compact) {
-                  MaterialTheme.typography.titleMedium
-                } else {
-                  MaterialTheme.typography.headlineMedium
+              AppCardContent(
+                title = uiModel.temperature,
+                subtitle = stringResource(uiModel.descriptionRes),
+                supportingText = uiModel.locationText,
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalSpacing = 16.dp,
+                titleStyle =
+                  if (compact) {
+                    MaterialTheme.typography.titleMedium
+                  } else {
+                    MaterialTheme.typography.headlineMedium
+                  },
+                subtitleStyle =
+                  if (compact) {
+                    MaterialTheme.typography.bodySmall
+                  } else {
+                    MaterialTheme.typography.bodyMedium
+                  },
+                supportingTextStyle = MaterialTheme.typography.bodySmall,
+                titleColor = contentColor,
+                subtitleColor = contentColor.copy(alpha = 0.9f),
+                supportingTextColor = contentColor.copy(alpha = 0.7f),
+                titleMaxLines = 1,
+                subtitleMaxLines = 1,
+                supportingTextMaxLines = 1,
+                trailingContent =
+                  if (onRetry == null) null
+                  else {
+                    {
+                      IconButton(onClick = onRetry, enabled = !isRefreshing && refreshEnabled) {
+                        if (isRefreshing)
+                          CircularProgressIndicator(
+                            modifier = Modifier.size(20.dp),
+                            strokeWidth = 2.dp,
+                            color = contentColor,
+                          )
+                        else
+                          Icon(
+                            Icons.Default.Refresh,
+                            contentDescription = stringResource(R.string.doc_refresh),
+                            tint = contentColor,
+                          )
+                      }
+                    }
+                  },
+                leadingContent = {
+                  AppCardMediaContent(
+                    media = uiModel.icon,
+                    fallbackIcon = Icons.Default.Cloud,
+                    contentDescription = stringResource(R.string.ui_weather),
+                    fallbackTint = contentColor,
+                    modifier = Modifier.size(if (compact) 40.dp else 56.dp),
+                  )
                 },
-              subtitleStyle =
-                if (compact) {
-                  MaterialTheme.typography.bodySmall
-                } else {
-                  MaterialTheme.typography.bodyMedium
-                },
-              supportingTextStyle = MaterialTheme.typography.bodySmall,
-              titleColor = contentColor,
-              subtitleColor = contentColor.copy(alpha = 0.9f),
-              supportingTextColor = contentColor.copy(alpha = 0.7f),
-              titleMaxLines = 1,
-              subtitleMaxLines = 1,
-              supportingTextMaxLines = 1,
-              trailingContent = if (onRetry == null) null else {
-                {
-                  IconButton(onClick = onRetry, enabled = !isRefreshing && refreshEnabled) {
-                    if (isRefreshing) CircularProgressIndicator(
-                      modifier = Modifier.size(20.dp), strokeWidth = 2.dp, color = contentColor
-                    ) else Icon(
-                      Icons.Default.Refresh,
-                      contentDescription = stringResource(R.string.doc_refresh),
-                      tint = contentColor,
-                    )
-                  }
-                }
-              },
-              leadingContent = {
-                AppCardMediaContent(
-                  media = uiModel.icon,
-                  fallbackIcon = Icons.Default.Cloud,
-                  contentDescription = stringResource(R.string.ui_weather),
-                  fallbackTint = contentColor,
-                  modifier = Modifier.size(if (compact) 40.dp else 56.dp),
+              )
+              if (!statusText.isNullOrBlank())
+                Text(
+                  statusText,
+                  modifier = Modifier.padding(top = 6.dp),
+                  style = MaterialTheme.typography.labelSmall,
+                  color = contentColor,
                 )
-              },
-            )
-            if (!statusText.isNullOrBlank()) Text(
-              statusText,
-              modifier = Modifier.padding(top = 6.dp),
-              style = MaterialTheme.typography.labelSmall,
-              color = contentColor,
-            )
             }
           }
         }

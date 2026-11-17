@@ -7,18 +7,17 @@ package com.karandaev.fieldfolio.feature.document.editor
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material.pullrefresh.*
-import com.karandaev.fieldfolio.core.datarefresh.LocalRefreshScope
-import com.karandaev.fieldfolio.core.datarefresh.rememberRefreshScope
-import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
+import androidx.compose.material.pullrefresh.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.unit.dp
+import com.karandaev.fieldfolio.core.datarefresh.LocalRefreshScope
+import com.karandaev.fieldfolio.core.datarefresh.rememberRefreshScope
 import com.karandaev.fieldfolio.core.document.*
 import com.karandaev.fieldfolio.core.domain.model.location.MapPoint
 import com.karandaev.fieldfolio.core.ui.components.actions.HintIconButton
@@ -30,6 +29,7 @@ import com.karandaev.fieldfolio.core.ui.text.*
 import com.karandaev.fieldfolio.core.ui.text.tr
 import com.karandaev.fieldfolio.feature.document.state.DocumentAudioSession
 import com.karandaev.fieldfolio.feature.document.viewer.*
+import kotlinx.coroutines.launch
 
 @Composable
 fun DocumentElementPreviewDialog(
@@ -45,9 +45,11 @@ fun DocumentElementPreviewDialog(
 ) {
   val previewRefresh = rememberRefreshScope()
   val scope = rememberCoroutineScope()
-  val pull = rememberPullRefreshState(previewRefresh.refreshing, {
-    scope.launch { previewRefresh.refresh() }
-  })
+  val pull =
+    rememberPullRefreshState(
+      previewRefresh.refreshing,
+      { scope.launch { previewRefresh.refresh() } },
+    )
   var rename by rememberViewerSession("preview-rename") { mutableStateOf(false) }
   @Composable
   fun RowScope.Actions() {
@@ -80,49 +82,55 @@ fun DocumentElementPreviewDialog(
   } else
     SafeAppDialog(dismiss) {
       CompositionLocalProvider(LocalRefreshScope provides previewRefresh) {
-      Scaffold(
-        Modifier.testTag("element-preview-window"),
-        contentWindowInsets = WindowInsets(0, 0, 0, 0),
-        topBar = {
-          TopAppBar(
-            title = { Text(node.displayLabel, maxLines = 1) },
-            windowInsets = WindowInsets(0, 0, 0, 0),
-            navigationIcon = {
-              HintIconButton(dismiss, tooltip = tr("close")) {
-                Icon(Icons.Default.Close, tr("close"))
-              }
-            },
-            actions = { Actions() },
-          )
-        },
-      ) { pad ->
-        Box(
-          Modifier.fillMaxSize().padding(pad).then(
-            if (previewRefresh.hasRefreshableNeeds) Modifier.pullRefresh(pull) else Modifier
-          ),
-          contentAlignment = Alignment.Center,
-        ) {
-          Column(
-            Modifier.widthIn(max = if (node.kind == BlockKind.AUDIO) 440.dp else 560.dp)
-              .fillMaxWidth()
-              .verticalScroll(rememberScrollState())
-              .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp),
-          ) {
-            DocumentElementCard(
-              node,
-              files,
-              device,
-              refresh,
-              audio,
-              permission,
-              editorPreview = true,
+        Scaffold(
+          Modifier.testTag("element-preview-window"),
+          contentWindowInsets = WindowInsets(0, 0, 0, 0),
+          topBar = {
+            TopAppBar(
+              title = { Text(node.displayLabel, maxLines = 1) },
+              windowInsets = WindowInsets(0, 0, 0, 0),
+              navigationIcon = {
+                HintIconButton(dismiss, tooltip = tr("close")) {
+                  Icon(Icons.Default.Close, tr("close"))
+                }
+              },
+              actions = { Actions() },
             )
+          },
+        ) { pad ->
+          Box(
+            Modifier.fillMaxSize()
+              .padding(pad)
+              .then(
+                if (previewRefresh.hasRefreshableNeeds) Modifier.pullRefresh(pull) else Modifier
+              ),
+            contentAlignment = Alignment.Center,
+          ) {
+            Column(
+              Modifier.widthIn(max = if (node.kind == BlockKind.AUDIO) 440.dp else 560.dp)
+                .fillMaxWidth()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp),
+              verticalArrangement = Arrangement.spacedBy(12.dp),
+            ) {
+              DocumentElementCard(
+                node,
+                files,
+                device,
+                refresh,
+                audio,
+                permission,
+                editorPreview = true,
+              )
+            }
+            if (previewRefresh.hasRefreshableNeeds)
+              PullRefreshIndicator(
+                previewRefresh.refreshing,
+                pull,
+                Modifier.align(Alignment.TopCenter),
+              )
           }
-          if (previewRefresh.hasRefreshableNeeds)
-            PullRefreshIndicator(previewRefresh.refreshing, pull, Modifier.align(Alignment.TopCenter))
         }
-      }
       }
     }
   if (rename && update != null)

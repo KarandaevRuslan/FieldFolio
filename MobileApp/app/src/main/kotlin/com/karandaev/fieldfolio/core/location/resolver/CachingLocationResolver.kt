@@ -53,8 +53,8 @@ class CachingLocationResolver(
 
   /** Saves the located place as the last known real device location. */
   private suspend fun cacheLocatedPlace(locatedPlace: LocatedPlace) {
-    val measuredAt = locatedPlace.location.timestampMillis?.takeIf { it > 0L }
-      ?: currentTimeMillis()
+    val measuredAt =
+      locatedPlace.location.timestampMillis?.takeIf { it > 0L } ?: currentTimeMillis()
     // A legacy location resolver and the shared coordinator can both write this record.
     // Never let an old framework cache read overwrite a newer fix after a screen resumes.
     val previous = persistedAppStateRepository.observeLastKnownLocation().first()

@@ -19,8 +19,8 @@ import androidx.lifecycle.*
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.karandaev.fieldfolio.R
 import com.karandaev.fieldfolio.acode.web.evaluateJs
-import com.karandaev.fieldfolio.core.document.*
 import com.karandaev.fieldfolio.core.datarefresh.rememberDeviceFix
+import com.karandaev.fieldfolio.core.document.*
 import com.karandaev.fieldfolio.core.document.runtime.*
 import com.karandaev.fieldfolio.core.ui.components.actions.HintFilledTonalIconButton
 import com.karandaev.fieldfolio.core.ui.components.actions.HintIconButton
@@ -136,11 +136,13 @@ internal fun DocumentRuntimeView(
   // text report, an ACTIVE notebook therefore needs an up-to-date location snapshot.
   // It shares the app-wide GPS request with every visible widget and map; VFS get() itself
   // still does not trigger a network request or create a permanent subscription.
-  val vfsUsesDevice = remember(access) {
-    access.weather != null && access.document.nodes.any {
-      it.deviceLocation && it.kind in setOf(BlockKind.LOCATION, BlockKind.WEATHER)
+  val vfsUsesDevice =
+    remember(access) {
+      access.weather != null &&
+        access.document.nodes.any {
+          it.deviceLocation && it.kind in setOf(BlockKind.LOCATION, BlockKind.WEATHER)
+        }
     }
-  }
   if (vfsUsesDevice) rememberDeviceFix(active = active)
   val context = LocalContext.current
   val lifecycle = LocalLifecycleOwner.current

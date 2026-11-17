@@ -31,10 +31,10 @@ object MapFocusPreferences {
     val state = remember(context) { mutableStateOf(showCurrentMapCenter(context)) }
     DisposableEffect(context) {
       val prefs = preferences(context)
-      val listener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
-        if (key == SHOW_CURRENT_MAP_CENTER)
-          state.value = showCurrentMapCenter(context)
-      }
+      val listener =
+        SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
+          if (key == SHOW_CURRENT_MAP_CENTER) state.value = showCurrentMapCenter(context)
+        }
       prefs.registerOnSharedPreferenceChangeListener(listener)
       onDispose { prefs.unregisterOnSharedPreferenceChangeListener(listener) }
     }

@@ -25,9 +25,9 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.*
-import com.karandaev.fieldfolio.core.di.rememberAppServices
 import com.karandaev.fieldfolio.core.datarefresh.LocalRefreshScope
 import com.karandaev.fieldfolio.core.datarefresh.rememberRefreshScope
+import com.karandaev.fieldfolio.core.di.rememberAppServices
 import com.karandaev.fieldfolio.core.document.*
 import com.karandaev.fieldfolio.core.domain.model.location.MapPoint
 import com.karandaev.fieldfolio.core.models.*
@@ -402,7 +402,12 @@ fun DocumentRoute(
               }
             }
         }
-        if (!editing) PullRefreshIndicator(vm.loading || refreshScope.refreshing, pull, Modifier.align(Alignment.TopCenter))
+        if (!editing)
+          PullRefreshIndicator(
+            vm.loading || refreshScope.refreshing,
+            pull,
+            Modifier.align(Alignment.TopCenter),
+          )
       }
     }
     if (addMenu)

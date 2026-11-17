@@ -12,8 +12,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.karandaev.fieldfolio.core.location.place.PlaceNameProvider
 import com.karandaev.fieldfolio.core.di.rememberAppServices
+import com.karandaev.fieldfolio.core.location.place.PlaceNameProvider
 import com.karandaev.fieldfolio.core.location.resolver.LocationResolver
 import com.karandaev.fieldfolio.core.ui.lifecycle.findActivity
 import com.karandaev.fieldfolio.core.util.formatters.formatCoordinate

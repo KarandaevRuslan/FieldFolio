@@ -7,9 +7,9 @@ import com.karandaev.fieldfolio.core.ui.components.map.marker.model.OsmMarkerSpe
 /**
  * Show live-feed points on the map as well as in its focus menu.
  *
- * Existing regular markers keep their identity and click behaviour. A tracked point with a
- * matching marker ID updates the position only for the device marker (which can otherwise
- * remain at a saved, stale position on the main map).
+ * Existing regular markers keep their identity and click behaviour. A tracked point with a matching
+ * marker ID updates the position only for the device marker (which can otherwise remain at a saved,
+ * stale position on the main map).
  */
 fun mergeMarkersWithTrackedPoints(
   markers: List<OsmMarkerSpec>,
@@ -27,18 +27,21 @@ fun mergeMarkersWithTrackedPoints(
       }
     } else {
       markerIndexes[markerId] = result.size
-      result += OsmMarkerSpec(
-        id = markerId,
-        point = tracked.point,
-        kind = OsmMarkerKind.Current,
-        title = tracked.title,
-      )
+      result +=
+        OsmMarkerSpec(
+          id = markerId,
+          point = tracked.point,
+          kind = OsmMarkerKind.Current,
+          title = tracked.title,
+        )
     }
   }
   return result
 }
 
-/** Keep the focus button pointed at the currently rendered marker, not its stale caller snapshot. */
+/**
+ * Keep the focus button pointed at the currently rendered marker, not its stale caller snapshot.
+ */
 fun resolveLinkedFocusTarget(
   focusTarget: MapPoint?,
   focusTargetMarkerId: String?,

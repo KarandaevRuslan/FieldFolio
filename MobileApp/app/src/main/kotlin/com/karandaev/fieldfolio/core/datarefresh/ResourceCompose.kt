@@ -14,6 +14,7 @@ import com.karandaev.fieldfolio.core.weather.openmeteo.WeatherCacheKey
 import kotlinx.coroutines.awaitCancellation
 
 private object DeviceRefreshKey
+
 private object DeviceWeatherRefreshKey
 
 /** Registers a GPS need only when actively composed and the screen is RESUMED. */
@@ -28,7 +29,11 @@ fun rememberDeviceFix(active: Boolean = true, includeInPull: Boolean = true): De
       lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
         coordinator.permissionChanged()
         val subscription = coordinator.watchLocation()
-        try { awaitCancellation() } finally { subscription.close() }
+        try {
+          awaitCancellation()
+        } finally {
+          subscription.close()
+        }
       }
     }
   }
@@ -49,13 +54,18 @@ fun rememberWeatherReading(
   val lifecycle = LocalLifecycleOwner.current.lifecycle
   val key = point?.let { WeatherCacheKey.from(it.latitude, it.longitude) }
   val flow = remember(coordinator, key) { point?.let { coordinator.weatherAt(it) } }
-  val reading by (flow ?: remember { kotlinx.coroutines.flow.MutableStateFlow(WeatherReading()) })
-    .collectAsStateWithLifecycle()
+  val reading by
+    (flow ?: remember { kotlinx.coroutines.flow.MutableStateFlow(WeatherReading()) })
+      .collectAsStateWithLifecycle()
   LaunchedEffect(coordinator, lifecycle, key, active) {
     if (active && point != null) {
       lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
         val subscription = coordinator.watchWeather(point)
-        try { awaitCancellation() } finally { subscription.close() }
+        try {
+          awaitCancellation()
+        } finally {
+          subscription.close()
+        }
       }
     }
   }
@@ -74,7 +84,5 @@ fun rememberWeatherPoint(devicePoint: MapPoint?): MapPoint? =
 @Composable
 fun RegisterDeviceWeatherRefresh(active: Boolean = true) {
   val coordinator = rememberAppServices().resourceCoordinator
-  if (active) RegisterRefreshNeed(DeviceWeatherRefreshKey) {
-    coordinator.refreshDeviceWeather()
-  }
+  if (active) RegisterRefreshNeed(DeviceWeatherRefreshKey) { coordinator.refreshDeviceWeather() }
 }

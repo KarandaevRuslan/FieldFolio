@@ -26,10 +26,10 @@ import com.karandaev.fieldfolio.core.location.LocationDefaults
 import com.karandaev.fieldfolio.core.ui.components.actions.HintFilledTonalIconButton
 import com.karandaev.fieldfolio.core.ui.components.map.camera.OsmMapCameraConfig
 import com.karandaev.fieldfolio.core.ui.components.map.camera.focusOn
+import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.model.OsmTrackedFocusPoint
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.model.buildOsmFocusMenuItems
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.model.mergeMarkersWithTrackedPoints
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.model.resolveLinkedFocusTarget
-import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.model.OsmTrackedFocusPoint
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.source.DeviceFocusPointFeed
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.source.OsmFocusPointFeed
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.ui.MapFocusMenuOverlay
@@ -41,8 +41,8 @@ import com.karandaev.fieldfolio.core.ui.components.map.controls.ui.MapZoomContro
 import com.karandaev.fieldfolio.core.ui.components.map.events.rememberOsmMapView
 import com.karandaev.fieldfolio.core.ui.components.map.lifecycle.MapLifecycleEffect
 import com.karandaev.fieldfolio.core.ui.components.map.marker.model.OsmMarkerSpec
-import com.karandaev.fieldfolio.core.ui.components.map.settings.MapFocusPreferences
 import com.karandaev.fieldfolio.core.ui.components.map.marker.style.markerPalette
+import com.karandaev.fieldfolio.core.ui.components.map.settings.MapFocusPreferences
 import com.karandaev.fieldfolio.core.ui.components.map.state.rememberAdaptiveOsmMapState
 import com.karandaev.fieldfolio.core.ui.components.map.state.updateAdaptiveOsmMap
 import com.karandaev.fieldfolio.core.ui.components.map.viewport.MapContainer

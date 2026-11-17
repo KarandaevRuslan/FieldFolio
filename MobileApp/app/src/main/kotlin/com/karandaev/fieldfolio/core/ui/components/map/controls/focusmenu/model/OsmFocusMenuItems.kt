@@ -5,9 +5,9 @@ import com.karandaev.fieldfolio.core.ui.components.map.marker.model.OsmMarkerKin
 import com.karandaev.fieldfolio.core.ui.components.map.marker.model.OsmMarkerSpec
 
 /**
- * Builds focus destinations ordered by proximity to the selected origin.
- * The origin and all points at that position come first; other destinations follow by distance.
- * Individual participants keep separate identities even when their coordinates coincide.
+ * Builds focus destinations ordered by proximity to the selected origin. The origin and all points
+ * at that position come first; other destinations follow by distance. Individual participants keep
+ * separate identities even when their coordinates coincide.
  */
 fun buildOsmFocusMenuItems(
   focusTarget: MapPoint?,
@@ -28,63 +28,70 @@ fun buildOsmFocusMenuItems(
   // extra row would only repeat the same navigation action. Different participants
   // at that position still retain their own rows, keyed by identity.
   val targetKey = focusTarget?.toMapPointKey()
-  val representedFocusTarget = targetKey != null && (
-    markers.any { marker ->
-      marker.point.toMapPointKey() == targetKey ||
-        (focusTargetMarkerId != null && marker.id == focusTargetMarkerId)
-    } || trackedPoints.any { tracked ->
-      tracked.point.toMapPointKey() == targetKey ||
-        (focusTargetMarkerId != null && tracked.linkedMarkerId == focusTargetMarkerId)
-    }
-  )
+  val representedFocusTarget =
+    targetKey != null &&
+      (markers.any { marker ->
+        marker.point.toMapPointKey() == targetKey ||
+          (focusTargetMarkerId != null && marker.id == focusTargetMarkerId)
+      } ||
+        trackedPoints.any { tracked ->
+          tracked.point.toMapPointKey() == targetKey ||
+            (focusTargetMarkerId != null && tracked.linkedMarkerId == focusTargetMarkerId)
+        })
 
   val unsorted = buildList {
-    focusTarget?.takeUnless { representedFocusTarget }?.let { point ->
-      addIfNotDuplicate(
-        item =
-          point.toFocusMenuItem(
-            id = "focus-target",
-            title = focusTargetTitle,
-            kind = OsmFocusMenuItemKind.FocusTarget,
-            distanceOrigin = distanceOrigin,
-            distanceOriginKey = distanceOriginKey,
-          ),
-        usedIds = usedIds,
-      )
-    }
+    focusTarget
+      ?.takeUnless { representedFocusTarget }
+      ?.let { point ->
+        addIfNotDuplicate(
+          item =
+            point.toFocusMenuItem(
+              id = "focus-target",
+              title = focusTargetTitle,
+              kind = OsmFocusMenuItemKind.FocusTarget,
+              distanceOrigin = distanceOrigin,
+              distanceOriginKey = distanceOriginKey,
+            ),
+          usedIds = usedIds,
+        )
+      }
 
     trackedPoints.forEach { tracked ->
       addIfNotDuplicate(
-        item = tracked.point.toFocusMenuItem(
-          id = "tracked-${tracked.id}",
-          title = tracked.title,
-          kind = OsmFocusMenuItemKind.Tracked,
-          distanceOrigin = distanceOrigin,
-          distanceOriginKey = distanceOriginKey,
-        ).copy(
-          measuredAtMillis = tracked.measuredAtMillis,
-          accuracyMeters = tracked.accuracyMeters,
-          stale = tracked.stale,
-        ),
+        item =
+          tracked.point
+            .toFocusMenuItem(
+              id = "tracked-${tracked.id}",
+              title = tracked.title,
+              kind = OsmFocusMenuItemKind.Tracked,
+              distanceOrigin = distanceOrigin,
+              distanceOriginKey = distanceOriginKey,
+            )
+            .copy(
+              measuredAtMillis = tracked.measuredAtMillis,
+              accuracyMeters = tracked.accuracyMeters,
+              stale = tracked.stale,
+            ),
         usedIds = usedIds,
       )
     }
 
     val representedMarkers = trackedPoints.map { it.linkedMarkerId ?: "tracked-${it.id}" }.toSet()
-    markers.asSequence()
+    markers
+      .asSequence()
       .filter { it.kind == OsmMarkerKind.Current && it.id !in representedMarkers }
       .forEach { marker ->
-      addIfNotDuplicate(
-        item =
-          marker.toFocusMenuItem(
-            id = "current-${marker.id}",
-            kind = OsmFocusMenuItemKind.Current,
-            distanceOrigin = distanceOrigin,
-            distanceOriginKey = distanceOriginKey,
-          ),
-        usedIds = usedIds,
-      )
-    }
+        addIfNotDuplicate(
+          item =
+            marker.toFocusMenuItem(
+              id = "current-${marker.id}",
+              kind = OsmFocusMenuItemKind.Current,
+              distanceOrigin = distanceOrigin,
+              distanceOriginKey = distanceOriginKey,
+            ),
+          usedIds = usedIds,
+        )
+      }
 
     if (showCurrentMapCenter) {
       addIfNotDuplicate(
@@ -100,24 +107,26 @@ fun buildOsmFocusMenuItems(
       )
     }
 
-    markers.asSequence().filter { it.kind != OsmMarkerKind.Current }.forEach { marker ->
-      addIfNotDuplicate(
-        item =
-          marker.toFocusMenuItem(
-            id = "marker-${marker.id}",
-            kind = OsmFocusMenuItemKind.Marker,
-            distanceOrigin = distanceOrigin,
-            distanceOriginKey = distanceOriginKey,
-          ),
-        usedIds = usedIds,
-      )
-    }
+    markers
+      .asSequence()
+      .filter { it.kind != OsmMarkerKind.Current }
+      .forEach { marker ->
+        addIfNotDuplicate(
+          item =
+            marker.toFocusMenuItem(
+              id = "marker-${marker.id}",
+              kind = OsmFocusMenuItemKind.Marker,
+              distanceOrigin = distanceOrigin,
+              distanceOriginKey = distanceOriginKey,
+            ),
+          usedIds = usedIds,
+        )
+      }
   }
   // Stable sorting: origin (including all collocated identities) first, then nearest
   // destinations. A "Current" marker never outranks a closer selected marker.
   return unsorted.sortedWith(
-    compareByDescending<OsmFocusMenuItem> { it.isOrigin }
-      .thenBy { it.distanceFromOriginMeters }
+    compareByDescending<OsmFocusMenuItem> { it.isOrigin }.thenBy { it.distanceFromOriginMeters }
   )
 }
 
