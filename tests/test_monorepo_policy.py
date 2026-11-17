@@ -32,6 +32,12 @@ class TrackedFilesTest(unittest.TestCase):
             with self.subTest(path=path):
                 self.assertTrue(check.forbidden_path(path))
 
+    def test_calibration_sample_is_allowed_but_other_numpy_artifacts_are_not(self):
+        self.assertFalse(check.forbidden_path(
+            'DetectionTrainProj/calibration_image_sample_data_20x128x128x3_float32.npy'
+        ))
+        self.assertTrue(check.forbidden_path('DetectionTrainProj/exports/new_sample.npy'))
+
     def test_sources_and_required_vendor_archive_allowed(self):
         for path in (
             'Server/pom.xml',

@@ -9,17 +9,21 @@ The old `MobileApp/.github/` must be removed after the files are migrated.
 | `server-ci.yml` | Server path changes or manual | JDK 17, Maven `verify`, build JAR artifact |
 | `training-static.yml` | Training path changes or manual | Syntax of tracked Python sources only; **not** training/inference |
 | `repository-ci.yml` | Shared GitHub/docs/policy changes or manual | Path layout, tracked artifacts/secrets and policy tests |
-| `mobile-release.yml` | `v*` tags or manual | Reusable Mobile CI, tagged debug APK; optionally signed **draft** |
+| `mobile-release.yml` | `v*` tags or manual | Reusable Mobile CI, signed Release APK and **draft** GitHub Release |
 
 ## Tag and release behavior
 
 Android continues to use `v<versionName>` (example: `v2.2.0`), validated against
 `MobileApp/gradle.properties` by `MobileApp/scripts/release/check_tag.py`.
 **Do not** use `v*` tags for Server; a suggested convention is `server-v<version>`.
-This package does not add automatic server deployment, Docker builds, APK publishing,
-or model-training jobs. Tag pushes create a debug-signed **Actions artifact**, not a production
-GitHub Release. A signed release requires a manual run on a version tag and the protected
-`release` environment with secrets described in `MobileApp/docs/RELEASING.md`.
+This package does not add automatic server deployment, Docker builds, public APK publishing,
+or model-training jobs. Pushing a matching version tag automatically runs the signed Release APK job and
+creates a **draft GitHub Release** (APK and `SHA256SUMS`), after mobile CI succeeds.
+The reusable CI also builds Debug APKs for tests, but the release contains only
+the signed Release APK. The `release` environment must contain
+`FIREBASE_CONFIG_BASE64` and `FIELDFOLIO_SIGNING_BUNDLE_BASE64`; see
+`MobileApp/docs/RELEASING.md` for signing-bundle preparation. Published releases
+are never overwritten by a rerun.
 
 Workflows are path-filtered so a Server-only PR does not run the expensive Android suite.
 A PR changing both projects triggers both suites. Branch protection should require relevant
@@ -37,7 +41,7 @@ otherwise some clean PRs cannot be merged.
    repository's GitHub security settings separately.
 4. Use Actions -> select `Repository policy and docs`, `MobileApp CI`, and `Server CI` to
    run the first workflows manually after pushing changes.
-5. Keep the [root README](../README.md) and this workflow guide in sync when commands change.
+5. Add a link from your existing root `README.md` to `docs/README.md`.
 
 ## External services
 

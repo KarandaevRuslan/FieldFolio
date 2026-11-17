@@ -26,6 +26,11 @@ keystore.properties
 *.aab
 *.apks
 *.log
-release/
+/release/
 # Generated source archives are deliverables, not repository inputs
 Fieldfolio-*.zip
+
+# Release scripts are tracked source, not build artifacts.
+# Keep CI signing secrets out of Git.
+config/keystore.properties
+ci-signing/

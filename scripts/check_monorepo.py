@@ -10,12 +10,18 @@ REQUIRED = (
     'Server/pom.xml', 'Server/README.md', 'docs/README.md', 'docs/ARCHITECTURE.md',
     '.github/workflows/mobile-ci.yml', '.github/workflows/server-ci.yml',
     '.github/workflows/mobile-release.yml', '.github/workflows/repository-ci.yml',
+    'MobileApp/scripts/release/check_tag.py',
+    'MobileApp/scripts/release/prepare_inputs.py',
+    'MobileApp/scripts/release/make_signing_bundle.py',
+    'MobileApp/scripts/release/create_keystore.ps1',
 )
 FORBIDDEN_NAMES = {'google-services.json', 'firebase-service-account.json',
                    'application.yml', 'local.properties', 'keystore.p12', '.env'}
 FORBIDDEN_SUFFIXES = {'.patch', '.apk', '.aab', '.p12', '.pfx', '.jks', '.keystore', '.pem',
                       '.key', '.pt', '.pth', '.tflite', '.npy', '.npz', '.onnx', '.rar', '.7z'}
 BUNDLED_TFLITE = 'MobileApp/app/src/main/assets/models/road_damage_yolo_int8.tflite'
+# An existing small, intentional calibration sample is tracked with the training source.
+TRACKED_CALIBRATION_SAMPLE = 'DetectionTrainProj/calibration_image_sample_data_20x128x128x3_float32.npy' 
 ARCHIVE_SUFFIXES = {'.zip', '.tar', '.gz', '.tgz'}
 
 
@@ -34,7 +40,7 @@ def forbidden_path(name: str) -> bool:
         return True
     if path.suffix.lower() == '.patch' and path.as_posix().startswith('MobileApp/acode-web/third_party/acode/patches/'):
         return False
-    if path.as_posix() == BUNDLED_TFLITE:
+    if path.as_posix() in {BUNDLED_TFLITE, TRACKED_CALIBRATION_SAMPLE}:
         return False
     if path.suffix.lower() in FORBIDDEN_SUFFIXES:
         return True
