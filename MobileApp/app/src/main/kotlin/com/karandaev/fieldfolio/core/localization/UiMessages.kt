@@ -128,7 +128,7 @@ private val messageResources =
       R.string.message_reauthentication_with_password_is_available_only_for_email_password_accounts,
     "Current user email is not available." to R.string.message_current_user_email_is_not_available,
     "No signed-in user." to R.string.message_no_signed_in_user,
-    "Database reset to defaults." to R.string.message_database_reset_to_defaults,
+    "Reports cleared." to R.string.message_reports_cleared,
     "Reset failed" to R.string.message_reset_failed_title,
     "Signed in user" to R.string.message_signed_in_user,
     "Open profile" to R.string.message_open_profile,

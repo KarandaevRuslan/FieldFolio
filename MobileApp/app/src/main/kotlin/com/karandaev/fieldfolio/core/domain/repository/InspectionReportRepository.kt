@@ -55,6 +55,6 @@ interface InspectionReportRepository {
   /** Deletes a report by id. */
   suspend fun deleteById(id: Long)
 
-  /** Replaces all user reports with default seed reports. */
+  /** Clears all reports and folders, preserving accounts and app settings. */
   suspend fun resetToDefaults()
 }

@@ -5,7 +5,10 @@ import android.content.Context
 import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
 import com.karandaev.fieldfolio.core.data.local.AppDatabase
+import com.karandaev.fieldfolio.core.data.local.persisted.PersistedAppStateEntity
+import com.karandaev.fieldfolio.core.data.local.persisted.PersistedAppStateKeys
 import com.karandaev.fieldfolio.core.data.local.report.seed.DefaultInspectionReportsSeed
+import com.karandaev.fieldfolio.core.data.local.settings.AppSettingsEntity
 import com.karandaev.fieldfolio.core.domain.model.InspectionReport
 import com.karandaev.fieldfolio.core.domain.model.location.MapPoint
 import com.karandaev.fieldfolio.core.json.MoshiFactory
@@ -350,17 +353,58 @@ class ReportLibraryTest {
     }
 
   @Test
-  fun resetRetainsSeedSegmentationAndDoesNotRequireOldPasswords() = runBlocking {
-    val id = create()
-    library.setPassword(id, "secret passwordAa1!".toCharArray())
+  fun resetClearsProtectedReportsFoldersPayloadsAndSessionWithoutOldPasswords() = runBlocking {
+    val folder = library.createFolder("Private", null)
+    library.createFolder("Empty", folder)
+    val image = File(context.cacheDir, "reset-photo.png").apply { writeBytes(byteArrayOf(1, 2)) }
+    val id = library.saveWithImage(report(), folder, image.absolutePath, false)
+    val refs = nodes().mapNotNull { it.payloadRef }
+    assertNotNull(library.getInspectionReportById(id))
+    assertNotNull(LibraryImages.path(id))
+    library.setPassword(folder, "secret passwordAa1!".toCharArray())
     library.lockAll()
+    library.currentFolder.value = folder
+    val session = library.session.value
     library.resetToDefaults()
-    val all = nodes()
-    assertEquals(DefaultInspectionReportsSeed.create().size, all.size)
-    assertTrue(all.all { !it.folder && it.lockId == null })
-    assertTrue(
-      all.any { packet(it.id).snapshot.report.results.any { r -> r.segmentations.isNotEmpty() } }
-    )
+
+    assertTrue(nodes().isEmpty())
+    assertTrue(library.observeInspectionReports().first().isEmpty())
+    assertNull(library.getInspectionReportById(id))
+    assertNull(LibraryImages.path(id))
+    assertNull(library.currentFolder.value)
+    assertTrue(library.session.value > session)
+    refs.forEach { assertFalse(File(context.filesDir, "report-library/objects/$it").exists()) }
+    assertTrue(File(context.filesDir, "report-library/objects").listFiles().orEmpty().isEmpty())
+  }
+
+  @Test
+  fun resetPreservesSettingsAccessStateAndEmptyLibraryAcrossReopening() = runBlocking {
+    val settings =
+      AppSettingsEntity(
+        languageCode = "ru",
+        themeMode = "DARK",
+        serverBaseUrl = "https://example.com/",
+      )
+    val access =
+      PersistedAppStateEntity(
+        PersistedAppStateKeys.APP_ACCESS_STATE,
+        "{\"isGuestModeEnabled\":true}",
+        123,
+      )
+    db.settingsDao().upsert(settings)
+    db.persistedAppStateDao().upsert(access)
+    // Fresh installations retain this marker even after their initial seed was consumed.
+    db.libraryDao().state(LibraryState("seed", "true"))
+    val id = create()
+
+    library.resetToDefaults()
+    library = ReportLibrary(context, db, MoshiFactory.create())
+    assertTrue(library.observeNodes().first().isEmpty())
+    library.resetToDefaults()
+    assertTrue(nodes().isEmpty())
+    assertEquals(settings, db.settingsDao().getSettings())
+    assertEquals(access, db.persistedAppStateDao().getEntry(PersistedAppStateKeys.APP_ACCESS_STATE))
+    assertTrue(create() > id)
   }
 
   @Test

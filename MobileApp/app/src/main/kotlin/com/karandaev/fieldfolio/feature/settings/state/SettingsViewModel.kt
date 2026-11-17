@@ -25,8 +25,8 @@ internal const val SavedServerAvailabilityAutoCheckMinIntervalMillis = 60_000L
  * ViewModel for app settings.
  *
  * Exposes persisted settings, runtime-only dialog state, and handles settings updates, note
- * imports, resetting notes to default seed data, analysis backend URL synchronization, and server
- * availability checks.
+ * imports, clearing report data, analysis backend URL synchronization, and server availability
+ * checks.
  */
 class SettingsViewModel(
   internal val settingsRepository: SettingsRepository,
@@ -147,8 +147,8 @@ class SettingsViewModel(
   suspend fun importInspectionReports(inspectionReports: List<InspectionReport>) =
     performImportInspectionReports(inspectionReports)
 
-  /** Resets report data only when the active reset dialog has a valid confirmation word. */
-  fun resetInspectionReportsToDefaults() = performResetInspectionReportsToDefaults()
+  /** Resets report data only when confirmed; completes after the repository finishes. */
+  suspend fun resetInspectionReportsToDefaults() = performResetInspectionReportsToDefaults()
 
   companion object {
 

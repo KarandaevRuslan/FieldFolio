@@ -501,12 +501,9 @@ class ReportLibrary(
   }
 
   override suspend fun resetToDefaults() = access {
-    mutate { tx ->
-      tx.nodes.clear()
-      DefaultInspectionReportsSeed.create().forEach {
-        createReport(tx, packets.legacy(it, includeDetectionImage = false), null)
-      }
-    }
+    // Reset only the report tree. mutate also removes its stored payloads and cached reports.
+    // Keep initialization and nextId so reopening cannot reseed reports or reuse deleted IDs.
+    mutate { tx -> tx.nodes.clear() }
     lockAll()
   }
 

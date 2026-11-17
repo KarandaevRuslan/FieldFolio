@@ -187,10 +187,10 @@
     <string name="settings_data_export_reports_success">Inspection reports exported.</string>
 
     <string name="settings_data_reset_reports">Reset data</string>
-    <string name="settings_data_reset_reports_description">Restore the default inspection reports</string>
+    <string name="settings_data_reset_reports_description">Delete all reports and keep accounts and settings</string>
 
     <string name="settings_reset_data_dialog_title">Reset data?</string>
-    <string name="settings_reset_data_dialog_message">All current inspection reports will be deleted and the default inspection reports will be restored. This action cannot be undone.</string>
+    <string name="settings_reset_data_dialog_message">All reports, folders and their attachments will be deleted. Accounts and settings will be kept. This action cannot be undone. Enter RESET, then tap Reset to confirm.</string>
     <string name="settings_reset_data_dialog_confirm">Reset</string>
     <string name="settings_reset_data_dialog_cancel">Cancel</string>
 

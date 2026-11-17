@@ -116,9 +116,9 @@
     <string name="settings_data_export_reports_description">Сохранить отчёты в архив</string>
     <string name="settings_data_export_reports_success">Отчёты экспортированы.</string>
     <string name="settings_data_reset_reports">Сбросить данные</string>
-    <string name="settings_data_reset_reports_description">Восстановить исходные отчёты</string>
+    <string name="settings_data_reset_reports_description">Удалить все отчёты, сохранив аккаунты и настройки</string>
     <string name="settings_reset_data_dialog_title">Сбросить данные?</string>
-    <string name="settings_reset_data_dialog_message">Все текущие отчёты будут удалены и заменены исходными. Это действие нельзя отменить.</string>
+    <string name="settings_reset_data_dialog_message">Все отчёты, папки и их вложения будут удалены. Аккаунты и настройки сохранятся. Это действие нельзя отменить. Введите RESET и нажмите «Сбросить» для подтверждения.</string>
     <string name="settings_reset_data_dialog_confirm">Сбросить</string>
     <string name="settings_reset_data_dialog_cancel">Отмена</string>
     <string name="settings_about_app_title">Fieldfolio v%1$s</string>

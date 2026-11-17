@@ -65,7 +65,7 @@
     <string name="message_reauthentication_with_password_is_available_only_for_email_password_accounts">Reauthentication with password is available only for email/password accounts.</string>
     <string name="message_current_user_email_is_not_available">Current user email is not available.</string>
     <string name="message_no_signed_in_user">No signed-in user.</string>
-    <string name="message_database_reset_to_defaults">Database reset to defaults.</string>
+    <string name="message_reports_cleared">Reports cleared.</string>
     <string name="message_reset_failed_title">Reset failed</string>
     <string name="message_signed_in_user">Signed in user</string>
     <string name="message_open_profile">Open profile</string>

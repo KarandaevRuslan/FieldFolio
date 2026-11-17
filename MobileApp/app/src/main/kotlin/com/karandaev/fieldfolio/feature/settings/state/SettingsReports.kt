@@ -1,8 +1,6 @@
 package com.karandaev.fieldfolio.feature.settings.state
 
-import androidx.lifecycle.viewModelScope
 import com.karandaev.fieldfolio.core.domain.model.InspectionReport
-import kotlinx.coroutines.launch
 
 /**
  * Imports reports by inserting them into the database.
@@ -19,20 +17,14 @@ internal suspend fun SettingsViewModel.performImportInspectionReports(
   return inspectionReportRepository.insertAll(inspectionReports = inspectionReports)
 }
 
-/** Resets reports to default seed data if the confirmation word is entered correctly. */
-internal fun SettingsViewModel.performResetInspectionReportsToDefaults() {
+/** Clears report data if the confirmation word is entered correctly. */
+internal suspend fun SettingsViewModel.performResetInspectionReportsToDefaults() {
   val dialogState = runtimeUiState.value.dialogState
-
-  if (dialogState !is SettingsDialogState.ResetData) {
-    return
+  check(dialogState is SettingsDialogState.ResetData && dialogState.isConfirmationValid) {
+    "Reset requires an open dialog and the confirmation word"
   }
 
-  if (!dialogState.isConfirmationValid) {
-    return
-  }
-
-  viewModelScope.launch {
-    inspectionReportRepository.resetToDefaults()
-    clearDialogState()
-  }
+  // Await the real repository operation; callers must not report success before it completes.
+  inspectionReportRepository.resetToDefaults()
+  clearDialogState()
 }
