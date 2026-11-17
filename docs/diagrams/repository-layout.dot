@@ -1,0 +1,21 @@
+digraph Fieldfolio {
+  graph [rankdir=LR, bgcolor="white", pad="0.28", nodesep="0.30", ranksep="0.67",
+         splines=polyline, fontname="Arial", fontsize=15];
+  node  [shape=box, style="rounded,filled", fillcolor="#eff6ff", color="#7196c5",
+         fontcolor="#17345b", fontname="Arial", fontsize=12, margin="0.20,0.12", penwidth=1.25];
+  edge  [color="#7590aa", arrowsize=0.75, penwidth=1.4, fontname="Arial",
+         fontsize=10, fontcolor="#405b75"];
+  Repo [label="Fieldfolio monorepo\nGit root", fillcolor="#dceaff", color="#3875c0", penwidth=1.8];
+  App [label="MobileApp\nAndroid / Gradle", fillcolor="#edf8f0", color="#76ad83"];
+  Server [label="Server\nSpring Boot / Maven", fillcolor="#e9e5ff", color="#8e78c9"];
+  Train [label="DetectionTrainProj\nPython training", fillcolor="#fff4e0", color="#e0ad54"];
+  CI [label=".github\nCI + release", fillcolor="#f7f9fc", color="#b8c5d4"];
+  Docs [label="docs\nshared guides", fillcolor="#f7f9fc", color="#b8c5d4"];
+  AppTests [label="Android / JVM / JS\nPython tests", fillcolor="#edf8f0", color="#76ad83"];
+  ServerTests [label="Maven verify", fillcolor="#e9e5ff", color="#8e78c9"];
+  TrainTests [label="Python syntax check", fillcolor="#fff4e0", color="#e0ad54"];
+
+  Repo -> App; Repo -> Server; Repo -> Train; Repo -> CI; Repo -> Docs;
+  App -> AppTests; Server -> ServerTests; Train -> TrainTests;
+  {rank=same; App; Server; Train; CI; Docs}
+}

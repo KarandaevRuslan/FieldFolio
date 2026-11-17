@@ -1,0 +1,29 @@
+digraph Fieldfolio {
+  graph [rankdir=LR, bgcolor="white", pad="0.28", nodesep="0.30", ranksep="0.67",
+         splines=polyline, fontname="Arial", fontsize=15];
+  node  [shape=box, style="rounded,filled", fillcolor="#eff6ff", color="#7196c5",
+         fontcolor="#17345b", fontname="Arial", fontsize=12, margin="0.20,0.12", penwidth=1.25];
+  edge  [color="#7590aa", arrowsize=0.75, penwidth=1.4, fontname="Arial",
+         fontsize=10, fontcolor="#405b75"];
+  Worker [label="Field worker", fillcolor="#f7f9fc", color="#b8c5d4"];
+  Mobile [label="Fieldfolio Android\nJetpack Compose", fillcolor="#dceaff", color="#3875c0", penwidth=1.8];
+  Room   [label="Local reports\nRoom + files", fillcolor="#edf8f0", color="#76ad83"];
+  Docs   [label="Document WebView\nread-only report VFS", fillcolor="#edf8f0", color="#76ad83"];
+  Model  [label="On-device inference\nTensorFlow Lite", fillcolor="#edf8f0", color="#76ad83"];
+  Auth   [label="Firebase\nAuthentication", fillcolor="#fff4e0", color="#e0ad54"];
+  API    [label="Spring Boot API", fillcolor="#e9e5ff", color="#8e78c9"];
+  Guard  [label="Upload validation\noptional ClamAV", fillcolor="#e9e5ff", color="#8e78c9"];
+  YOLO   [label="Python YOLO\ninference service", fillcolor="#e9e5ff", color="#8e78c9"];
+  Train  [label="DetectionTrainProj\nmodel training", fillcolor="#f7f9fc", color="#b8c5d4"];
+
+  Worker -> Mobile;
+  Mobile -> Room;
+  Mobile -> Docs;
+  Mobile -> Model;
+  Mobile -> Auth;
+  Mobile -> API [label="optional authenticated API"];
+  API -> Guard;
+  Guard -> YOLO;
+  Train -> YOLO [style=dashed, label="exported models\n(deployment-specific)"];
+  {rank=same; Room; Docs; Model; Auth; API}
+}

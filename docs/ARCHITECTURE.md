@@ -5,21 +5,7 @@ Spring Boot API with Maven; the training workspace has its own Python requiremen
 
 ## Runtime overview
 
-```mermaid
-flowchart LR
-    User[Android user] --> App[Fieldfolio Android / Jetpack Compose]
-    App --> Local[Local reports / Room / file storage]
-    App --> Web[Sandboxed Document WebView]
-    App --> Firebase[Firebase authentication]
-    App -->|HTTPS + Firebase ID token| API[Spring Boot Server]
-    API --> Auth[Firebase Admin ID token validation]
-    API --> Guard[Rate limits + image validation]
-    Guard --> AV[ClamAV when enabled]
-    Guard --> YOLO[Python YOLO HTTP /infer]
-    API --> DB[(PostgreSQL profile records)]
-    API --> Avatars[(Avatar file storage)]
-    Training[DetectionTrainProj] -.->|Exported models; integration is deployment-specific| YOLO
-```
+![Fieldfolio runtime architecture with optional backend services](diagrams/runtime-overview.svg)
 
 The client supports both on-device TFLite models and optional server-side detection. The
 interactive Document renderer has a scoped, read-only report VFS; it does not gain access
@@ -28,18 +14,7 @@ are separate from local report persistence.
 
 ## Repository layout
 
-```mermaid
-flowchart TB
-    Repo[Fieldfolio monorepo / Git root]
-    Repo --> Mobile[MobileApp: Gradle + Acode / Vite]
-    Repo --> Server[Server: Maven + Spring Boot]
-    Repo --> Training[DetectionTrainProj: Python training]
-    Repo --> Workflows[.github: CI, issues, release]
-    Repo --> Docs[docs: shared architecture and policies]
-    Mobile --> ClientTests[Android, JVM, JS and Python checks]
-    Server --> MavenTests[Maven verify; add JUnit tests when available]
-    Training --> TrainingSyntax[Tracked Python source syntax check]
-```
+![Fieldfolio monorepo layout and build ownership](diagrams/repository-layout.svg)
 
 ## Key source paths
 
@@ -59,3 +34,6 @@ flowchart TB
   models are directly deployable to the server without a separate export/configuration step.
 - A passing Android build and `mvn verify` do not test the end-to-end TLS, Firebase, ClamAV,
   database and YOLO pipeline. Deploy those dependencies in a separate integration environment.
+
+The diagrams above are committed SVG files so they render on GitHub even when its
+Mermaid renderer is unavailable. Editable Graphviz sources are in [`diagrams/`](diagrams/).

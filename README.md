@@ -74,22 +74,11 @@ For the complete feature list, see the [Android README](MobileApp/README.md).
 | **Android app** | [MobileApp/README.md](MobileApp/README.md) · [Architecture](MobileApp/ARCHITECTURE.md) | Gradle, Kotlin, Compose; Vite for bundled WebView assets |
 | **Server** | [Server/README.md](Server/README.md) · [Server architecture](Server/docs/ARCHITECTURE.md) | Maven, Java 17, Spring Boot |
 | **Model training** | [DetectionTrainProj/](DetectionTrainProj/) · [requirements.txt](DetectionTrainProj/requirements.txt) | Python, YOLO; training is separate from CI |
-| **Repository documentation** | [docs/README.md](docs/README.md) | Markdown and Mermaid |
+| **Repository documentation** | [docs/README.md](docs/README.md) | Markdown and SVG diagrams |
 
 ## System architecture
 
-```mermaid
-flowchart LR
-    User[Field worker] --> Mobile[Fieldfolio Android]
-    Mobile --> Local[(Room + report files)]
-    Mobile --> Docs[Isolated Document WebView / read-only VFS]
-    Mobile --> TFLite[On-device TFLite]
-    Mobile --> Auth[Firebase Authentication]
-    Mobile -->|Optional authenticated API calls| Server[Spring Boot API]
-    Server --> Security[Upload validation / optional ClamAV]
-    Security --> YOLO[Python YOLO inference service]
-    Training[DetectionTrainProj] -.->|Model artifacts| YOLO
-```
+![Fieldfolio system architecture: Android client, local data and inference, Firebase authentication, and optional Spring Boot / YOLO backend](docs/diagrams/system-overview.svg)
 
 More detailed diagrams and component boundaries:
 [system architecture](docs/ARCHITECTURE.md),
