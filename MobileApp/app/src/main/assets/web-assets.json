@@ -1,0 +1,699 @@
+{
+  "version": 1,
+  "inputs": [
+    {
+      "path": "acode-web/document-host.html",
+      "sha256": "dc662474dda98ff435e8343d397dc1fb870eee4467299e366d8182324b5fc713"
+    },
+    {
+      "path": "acode-web/document-public/THIRD_PARTY_NOTICES.txt",
+      "sha256": "09511a56459288f782fab3dced9e909a1cf1a96058ec3c6bbada6bcc5914888e"
+    },
+    {
+      "path": "acode-web/document.html",
+      "sha256": "1b07993b53c03f76d66308d22cf20596d0a8e0f8862e62f3df30f1a9ebcd1ac4"
+    },
+    {
+      "path": "acode-web/editor.html",
+      "sha256": "8d05bdc7b2bee0b5ea41f1c248571e030580e6e7b50f4b069217e46bbbe4a85f"
+    },
+    {
+      "path": "acode-web/package-lock.json",
+      "sha256": "8c173dc9cd44a840066c6b7dce7d854609af827025efd45998f9bc7aa1b44926"
+    },
+    {
+      "path": "acode-web/package.json",
+      "sha256": "a7ce164813405089de0fe80f902374cd395276d9d11ecb95c5b71b4c4ff3239e"
+    },
+    {
+      "path": "acode-web/public/acode-notices.txt",
+      "sha256": "d603e21cabb04ef5ab3e4c871ca72b614063eb6952ab182a0a7396ddc137077a"
+    },
+    {
+      "path": "acode-web/public/editor-boot.js",
+      "sha256": "4667b433ba44bce72e47c0667256088ab35b7e317b1bced824076b3ea3c69a43"
+    },
+    {
+      "path": "acode-web/public/web-boot.js",
+      "sha256": "348ef7003c44e1dfa7121484b079b918bae8280e9e031d2b99daafd2a401b00d"
+    },
+    {
+      "path": "acode-web/scripts/acode-build.mjs",
+      "sha256": "be1cd561f7906a5d509074c03baf551af56aae8fc4ed1d1009415d48855e15fa"
+    },
+    {
+      "path": "acode-web/scripts/asset-manifest.mjs",
+      "sha256": "9afda6bf4c6d6bd9fd95c5a824bdcbae60ff4e0ebde642da4a253b98095d1426"
+    },
+    {
+      "path": "acode-web/scripts/sync-help.mjs",
+      "sha256": "fafcab75272ab65251cef01d70dc759d8ad59438e6918854c127b73bda082866"
+    },
+    {
+      "path": "acode-web/src/acode/host/completionLayout.js",
+      "sha256": "ef19dcdb113e2bbb01c330e077949c309d11bff6bf694a9c0cf34ba7472b6374"
+    },
+    {
+      "path": "acode-web/src/acode/host/config.js",
+      "sha256": "dbc7c903528faafede79a925948666014c0cb81fcc428a1b23b989c9437b881d"
+    },
+    {
+      "path": "acode-web/src/acode/host/confirm.js",
+      "sha256": "18ce26f91d3a30df8443bb1e14544342740281c36d4be8e5cd42f13d91c686f8"
+    },
+    {
+      "path": "acode-web/src/acode/host/editorFile.js",
+      "sha256": "ddeb2a8a8c20596dddce1a17f8e48e6ed5a441599dd16ff306b04566848ff222"
+    },
+    {
+      "path": "acode-web/src/acode/host/environment.js",
+      "sha256": "54875708377875cd6d8ddc4cec8110f55e82994240db6e5b963c77bc17891c90"
+    },
+    {
+      "path": "acode-web/src/acode/host/foldControls.js",
+      "sha256": "8a1c19803753ea0832ed1e9aac01b404ef166095e7b5731bf243f650fc43b0da"
+    },
+    {
+      "path": "acode-web/src/acode/host/helpers.js",
+      "sha256": "68152ea83194f7244d6e43f07780f521385aaef3cef89ea6e64ca0acaadacdb8"
+    },
+    {
+      "path": "acode-web/src/acode/host/insertColor.js",
+      "sha256": "0013127aad7418e364d1ebb92870c84ade940ec7590a81424d1ec07f92a1c83e"
+    },
+    {
+      "path": "acode-web/src/acode/host/nativeSelectionInput.js",
+      "sha256": "ad0eec3e82c613f2c9e4a067dfb82ee847979d0e734baad91ec9e7a39c80047d"
+    },
+    {
+      "path": "acode-web/src/acode/host/observableCompletions.js",
+      "sha256": "ab85c7604becb5a1e0106089aa849b408d4aaf590c86d92d3821639db2e32215"
+    },
+    {
+      "path": "acode-web/src/acode/host/overlayViewport.js",
+      "sha256": "7a8aecf98e7f1dae040046a63dacab456f0b3474bb5ee6eb03d3de76ffcbf93f"
+    },
+    {
+      "path": "acode-web/src/acode/host/resourceLanguage.js",
+      "sha256": "96216e783edd18202ef75e87ea4b192d1299288b4fe2d34aad484fac5a603b09"
+    },
+    {
+      "path": "acode-web/src/acode/host/restoreTheme.js",
+      "sha256": "1d121a4ec6dfb10b9d5884c87cf33f2678653d38e5b3657efe2dda8b2a4042e3"
+    },
+    {
+      "path": "acode-web/src/acode/host/searchSettings.js",
+      "sha256": "2cb3a5a8b8fe9414aaf50a7829356af769b57d4f71750b2e69e19f3778d0d479"
+    },
+    {
+      "path": "acode-web/src/acode/host/sessionStore.js",
+      "sha256": "db0b0ec74a59a2c26689f8dfbce7e2cf7ef53bf33f9ab688e7cb1b9e16fbbc6d"
+    },
+    {
+      "path": "acode-web/src/acode/host/settings.js",
+      "sha256": "f481036cb666be5e2d8452a065950a4e5da2acd141ed12f8b36ac1a72dd3046e"
+    },
+    {
+      "path": "acode-web/src/acode/host/settingsPage.js",
+      "sha256": "0d0e9a5d7331bd222dc12a79083b9b2a1cd463c2af9aa0806e39a9eba374e5ae"
+    },
+    {
+      "path": "acode-web/src/acode/host/skin.scss",
+      "sha256": "a856ddec0b6dd181f3f342540b6fd89f5958d9a19efba1b7931e02fd3ed93d55"
+    },
+    {
+      "path": "acode-web/src/acode/host/systemConfiguration.js",
+      "sha256": "b0ba9473b620d662a53f5b4d396a897b0b290d2db6bca2e6b58d0048398208d0"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/baseExtensions.ts",
+      "sha256": "744ba8980a9bd65a8ee3348e2813564101408b864102e08c2796e156fdd406e7"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/commandRegistry.js",
+      "sha256": "82f74ec7335900bff86f7ba98852a89f74e660c2e6fd5adda6f18f4fd9a4539f"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/createEditorView.ts",
+      "sha256": "5d09aa29ae8e16dc7a7340001a2a057514890ee5217c30d8c479e37815cc28cd"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/editorReadOnly.ts",
+      "sha256": "0b63149c6cf862a0f064374d2f9cbb66f541f783d8aff7770f3facf16398cd19"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/editorUtils.ts",
+      "sha256": "5f691ce0ed68a61ba6fbaa528333adb9201f8596a91e3b652d3d6ef74e5c9ba0"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/foldAwareLineCommands.ts",
+      "sha256": "d69baac4c9c38973477455be30c6ffb4e88163eb62716ad61c5a936e669807e9"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/foldingCommands.js",
+      "sha256": "7642db21126010a5e8353e412c9a54e6a34e2dec4c1cc9189606c86b0320250c"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/highlightTags.ts",
+      "sha256": "c13362872112df1b899e565542887a02f9deb7c8cd7253968ba33e5aaa89f00e"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/indentationFolding.ts",
+      "sha256": "687d6a6d5bd976c827954227b1deb47eb0ea8224c655bcc36c12dadbee45c31a"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/indentedLineWrapping.ts",
+      "sha256": "94c25be9bdc992fb1a72189400290aded75a38cf2c45158e1734d164789cad4b"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/indentGuides.ts",
+      "sha256": "d7f4ab1bce7b10fc00b78aa709bc45524d7b377112bab84a08d07ca2068e5ecd"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/keyBindingUtils.js",
+      "sha256": "a6fa6d14be7868b5d20a72a994fddcf5b3b0bee4f642f0bb57fe49e487e85d3b"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/lineNumberSelection.ts",
+      "sha256": "8fb1654413e58a26e034bee9e0ab861b934eaaf90304760fd886291006d5d91f"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/localWordCompletions.ts",
+      "sha256": "5c53300ba5d8d8ff236bdd88f54064c028691e15d59f53126d0c76792097cfaa"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/mainEditorExtensions.ts",
+      "sha256": "b6839ad145ceeb4ac930a8e76418044a32cf6038e454e5822fb3d5ffd9957725"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/punctuationWrapping.ts",
+      "sha256": "39bc81aa7e2b5affc8aac43731649ff2d9f1150eeb59c940c045df73941f1408"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/quickToolsModifierInput.ts",
+      "sha256": "63e72c40549f46eff4d18ac345262b37b16639fb7d3c25e2bbe5a11bcd66c373"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/quickToolsModifierKeys.ts",
+      "sha256": "39cd241bb70fee43cf054710a23ff4e2c27dbaed15b41e1e35726f16d9c4242d"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/quickToolsNavigation.ts",
+      "sha256": "16f04e733c5e590777ec03ca1d5500b988f95da019ed46f798430ee6620b3d1f"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/rainbowBrackets.ts",
+      "sha256": "41c8344fe3aa2e81352b5be901f909c04937ade598ea88f5457b3ced6076a478"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/scrollPastEnd.ts",
+      "sha256": "8eae2bccc4c38bba3a199b8306122e9475355c1ad596bd501368f773958582b0"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/searchMatchHighlighter.ts",
+      "sha256": "d0cf0ee341321c1351e2b382cedfe6403fb6da1434f7efc600d7561f408376f2"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/selectionMenuUtils.ts",
+      "sha256": "bc689ef979b2b4cd7586b6dbf58b400c3d22d49ae400d808ce85cbdf4da7fe7a"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/shiftSelection.ts",
+      "sha256": "dcaa74bbda6873fdb5eb7babe0127e1adbb519fadbfcbea839413e5390316ed8"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/tagAutoRename.ts",
+      "sha256": "1e8bb50aa81d53504b6ad17881d1224b81db55a60e68218033b77b8bec6b9359"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/themes/githubLight.js",
+      "sha256": "a9e4c6742c166dd1e5f3329de825a5e32148664e6ff90b6189b731febd4f5733"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/cm/touchSelectionMenu.js",
+      "sha256": "f459b4df9ca566ba88f408c83476f15d5afc413d33eb74925b1c7de6f656c30b"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/checkbox/index.js",
+      "sha256": "2cc58e928f96d5d66b57b586e66fde66932c45618ed404e3a258d29c99f550c1"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/checkbox/styles.scss",
+      "sha256": "402945896b0df7845ec35c1a6be87380cb96a8bb7a58e61d6374edbcf930da75"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/inputhints/index.js",
+      "sha256": "f3fca53d129c00aa36f18c15b32162eecbb554eeeeae2c5a360eccd2023b2a98"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/inputhints/style.scss",
+      "sha256": "573a9fe3852f1e7ef980d8eff96ce601672089ff262e2163fd922ebefc47f31c"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/palette/index.js",
+      "sha256": "a43309c75c317325ef3acf150ab289c6db45ac8f1a015490c311bd75231b40e2"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/palette/style.scss",
+      "sha256": "56e81d3dd1ce6d525565dc9bc7378542fdfba02893168d7024f6a37e4eca1183"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/quickTools/footer.js",
+      "sha256": "4f0ff018a9ea7d28904f9aec5d65337cff1b17f3652daa85ebc4876dbc768906"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/quickTools/index.js",
+      "sha256": "1db641d8854a4f55ae9fbc19b130cd709ef3d2223edeea9da1628b438809161c"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/quickTools/items.js",
+      "sha256": "dff91c2d86493b977a246bc82dd089b48a04deca270a74e0f7da276b4bfbc281"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/quickTools/style.scss",
+      "sha256": "fb747618d3fd307a14175e7779b3cda3cc339783ed6ca4c44971e643313abc4c"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/scrollbar/index.js",
+      "sha256": "ffc91249f4241df9726e44f4fd966d158d46ffa8f8480834813b6471c2df038b"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/scrollbar/style.scss",
+      "sha256": "678d4372b4eaa9f4facd1cff0f053b82d380ab8b5aea61d303097833c44cb19b"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/tooltip/index.js",
+      "sha256": "0ab4881258d16b63ffa1cc0f3eafbfdf81c48d15f2072168ee69742ed46cb3ed"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/tooltip/longPress.js",
+      "sha256": "a6760cb2ccf0b07b2a667149696231e794c0a35f20238c30965dfe3ce935088f"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/components/tooltip/style.scss",
+      "sha256": "101faf3dabacb5fbf6ec8203cc63f192549d6c5a19173d393a3b4b5cd10e9ddf"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/dialogs/color.js",
+      "sha256": "8d263bf61da49ef13cb75276e2af039df4df649ef4f548460df396cc37945baa"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/dialogs/style.scss",
+      "sha256": "0fe0b8ec09ceb724e1a563f69958e3933c35e2af29831f63439362c18dc545cb"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/handlers/editorWorkaround.js",
+      "sha256": "f4faf0a395e1883524c0063331aa547b57f1b9896018f15a336c6696a56f9528"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/handlers/keyboard.js",
+      "sha256": "0b1799b46b69724064be1251cf6127da54dd028a1f1df6684d7b3177826acca6"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/handlers/quickTools.js",
+      "sha256": "56e894030b02c1b21af9cc30bb1a69800fb02bed3b8f722b8b9179326d9a95e4"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/handlers/quickToolsInit.js",
+      "sha256": "155cd163384acceb790bdac570bbffede369f3395a0cf204cfefd71c180735af"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/handlers/quickToolsState.js",
+      "sha256": "8f0ed7dbe113a95024f7809f027dadbb7f59c08c4262936650d2242fda63caa0"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/handlers/readOnlyQuickToolsCapture.ts",
+      "sha256": "24f7b2eb94ef6874e15d972a0bb7bf0357c1257b04a6470a4f2062e2ef4ab279"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/handlers/windowResize.js",
+      "sha256": "66c8f6ba0c7bfd8de0e6b42dfe5b3032f7d64c113e015c313594f0f36cdc8c81"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/lang/en-us.json",
+      "sha256": "8ba810c36c1733fe9de533ff2ce5db2a7fa2ba9f3f491b9bb43bae2877b513eb"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/lang/ru-ru.json",
+      "sha256": "a7893d88598e8cd84b3f766860af4393f67fe7b702140c45ec2b9d7bc0edb723"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/lib/actionStack.js",
+      "sha256": "f8d354da7d9fdab0df24a7baf78753cf37be355d7c08017a69579e6e23acc46f"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/lib/editorInteractionGuard.ts",
+      "sha256": "e6afa7ed5c53cc59fa3ae6efcf5c528649f8f209ebdee21bb0cdfedf9245d714"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/lib/keyBindings.js",
+      "sha256": "0962d0e6b304faac5e7e00ba0d3bbb50e2bbc921112acaadf9e1703f65f560b6"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/lib/quickToolsAdapter.js",
+      "sha256": "6f7d1dfd5c03e8f4945dd4a91ac9f5865fa3631014b8d727564df8de9d85d4ab"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/lib/quickToolsOverlays.js",
+      "sha256": "c5bbcc1991e122d9fa43f0d89ed6eec8343a8089320ea654c8b5381f9edb366a"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/lib/searchHistory.js",
+      "sha256": "f980d3a55ab86c95a614916b5e8b2609f021927fab2de7f716061ac7dc9b93aa"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/lib/selectionMenu.js",
+      "sha256": "2c4facd1298000517a7c773e6c2ff5d8e0aa18371f948fc20db00fd79e38397e"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/lib/singlePaneRuntime.js",
+      "sha256": "366af8d1009d0c1b8a7ec4d74d5da213891c9386e08daef163feda9e3fae8175"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/palettes/commandPalette/index.js",
+      "sha256": "1fdcd20f43ea52e970945a5767035e0f806f6af0be8ad4e1de5345720d3013d6"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/res/fonts/RobotoMono.ttf",
+      "sha256": "c59ecb6c18e38d4194249b6e1c555eb55c8e809258cf6d9b624d19d9268253bf"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/res/icons/icons.ttf",
+      "sha256": "b31ee592da1d3b88b580dea6bb3dd2c9f7ff5b679460f3595885c8799242200c"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/res/icons/style.css",
+      "sha256": "df2489d607546785aca26fdae0ce45d66d6047ec37c4f3e0aed093f0bdd196ca"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/styles/codemirror.scss",
+      "sha256": "39de92acf1d43ef114d05d9a5e56c782b26197bd9b7c31e670cb7e159944b688"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/styles/editor-ui.scss",
+      "sha256": "b6a0c3ed8989e9f61c2a21b0de6cfb522c115a41898b7dec43f71abab9a8b04e"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/styles/mixins.scss",
+      "sha256": "ff396accc1378e9b761ee5dc6a0cd34047cc650b4f548dbe2ebeeb207d11cdb6"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/utils/color/regex.js",
+      "sha256": "01e5072305ea2eda3f01194562b3e5b9d160b15553972ce7d2fc6d8e8d3b4cc6"
+    },
+    {
+      "path": "acode-web/src/acode/vendor/utils/keyboardEvent.js",
+      "sha256": "3d4cc8171a51dd111b826789b9efc6d7b4f511a2551b42b99a2cd68f2dd7e98b"
+    },
+    {
+      "path": "acode-web/src/document/application.js",
+      "sha256": "8b8304e38e553204bb61d4588e362d14bb85d3f621ce1d7fe5f4187fc2877869"
+    },
+    {
+      "path": "acode-web/src/document/cellPresentation.js",
+      "sha256": "136e4674c21788b4c9cc0a2decf60f1325ccad50022b061e89f6d1cb9c478dab"
+    },
+    {
+      "path": "acode-web/src/document/formState.js",
+      "sha256": "11536cc4f2786a1b64c4c2cd915315a5dc18f2c725c05842df6996a661221b5a"
+    },
+    {
+      "path": "acode-web/src/document/host.css",
+      "sha256": "389f210595f0a4fdb0d43942a5f978395d8c3977b4e7604f9e47c82d1949604a"
+    },
+    {
+      "path": "acode-web/src/document/host.js",
+      "sha256": "5b3c8a8dec3b20bfa60154244385a8a8c7265833df379652a767f9d44019e04a"
+    },
+    {
+      "path": "acode-web/src/document/index.js",
+      "sha256": "afb5219c6a46d7b0fad9e52c342e5d47bbf4305a70e4a178c67aad181ff3e84a"
+    },
+    {
+      "path": "acode-web/src/document/inputs-theme.css",
+      "sha256": "0529ec7dc0aa9e2808467160807ac160323ec55509d76eb9baac90c85914ee59"
+    },
+    {
+      "path": "acode-web/src/document/nexusRuntime.js",
+      "sha256": "0401cff4d1e8c4d871d713bf9a61974348cc1fdff2ec84f860e84b8b0a36b32b"
+    },
+    {
+      "path": "acode-web/src/document/notebookRuntime.js",
+      "sha256": "49e981f9ec2cb24fa2689a3fbf361f490557a8f63762cb7ad51b13ec7e60784b"
+    },
+    {
+      "path": "acode-web/src/document/observable-offline-library.js",
+      "sha256": "2866a77190a1db59f93cae0ea4bce3d46e5c17dc6305c0a307c2e5478c072a9f"
+    },
+    {
+      "path": "acode-web/src/document/pocket-context.js",
+      "sha256": "82ebf9bf736e8b06ff2f39b2090e16b00fe49a41689b115595cfbe8d0e75a6eb"
+    },
+    {
+      "path": "acode-web/src/document/preview-state.js",
+      "sha256": "3bdc27f1ac319ea3fd764afb079935b627a8eab3ae1936173dcb245f59d0ae59"
+    },
+    {
+      "path": "acode-web/src/document/scrollbar.css",
+      "sha256": "68b82b63fa3593b1e1563734caad31b592593401e84f6a896818718da5f9a966"
+    },
+    {
+      "path": "acode-web/src/document/scrollbar.js",
+      "sha256": "0d0ed3a184254ea995a5d809674a3d262ea400ba87aaaaf0c2412e83c6348290"
+    },
+    {
+      "path": "acode-web/src/document/search.js",
+      "sha256": "793edc1512bbfdc86df000874dacd3acc327c74b9b5a2e9c4de9ca45a781fc1e"
+    },
+    {
+      "path": "acode-web/src/document/storage.js",
+      "sha256": "f552cbfe57c2a02cf1ef4899977397a842577516a9e8f1dd43316393b8d31a7d"
+    },
+    {
+      "path": "acode-web/src/document/styles.css",
+      "sha256": "d7c6f3d25ab813a1701b36c7bcf812439bd4ea155da0fa73f913747984055614"
+    },
+    {
+      "path": "acode-web/src/document/vfs.js",
+      "sha256": "e2272290c91c62d512b3d07d0c7eb5517f8c9d38f8588054d03b6d7b5feea7a8"
+    },
+    {
+      "path": "acode-web/src/document/viewport.js",
+      "sha256": "8276311d458068cb241c984fbe555ebdc58424fcb9ccee89d2cc9535ff863d76"
+    },
+    {
+      "path": "acode-web/src/editor/index.js",
+      "sha256": "233f8fef3787a3a347836ef9cb333068d5f40604e3c0973cf3f8c79635b95e2f"
+    },
+    {
+      "path": "acode-web/src/locales/en.json",
+      "sha256": "5e1a3054e6a5cf87f31c57746da3970a8d9de720f5ff9b038a57177f8c84e3d4"
+    },
+    {
+      "path": "acode-web/src/locales/index.js",
+      "sha256": "94c9b840c230fe25ff25b22396bfd4b53e9a19fca7f1f1d8f6e858b452cf6191"
+    },
+    {
+      "path": "acode-web/src/locales/ru.json",
+      "sha256": "e8ad71588e66fa33b74ea75312f51b7138b9293e96c7545ee17c4c2e09a06a7b"
+    },
+    {
+      "path": "acode-web/src/logging/EditorDiagnostics.js",
+      "sha256": "683beb127f229e8cf7052b0d987a676cd5b3cec7ccee18e678dba91dd8509dfc"
+    },
+    {
+      "path": "acode-web/src/logging/EditorPipelineDiagnostics.js",
+      "sha256": "a60ec6dc670e94dfd9baa6e8dc6ea4d82198dd2db35289edac2529a6539da306"
+    },
+    {
+      "path": "acode-web/src/logging/NotebookLog.js",
+      "sha256": "5f21eab79abd8ebff75f005e7c1fd713cc4d543d9912896f9754cb45646f8fff"
+    },
+    {
+      "path": "acode-web/src/search/acodeReadOnly.js",
+      "sha256": "90733d044a053098effe52154fb8a660b175508e27b8d6ee6397faab80a49c19"
+    },
+    {
+      "path": "acode-web/src/search/query.js",
+      "sha256": "791dcaf72f90eb90c162402d0b41f05ab39b400f000fba06cfc547294ef70757"
+    },
+    {
+      "path": "acode-web/src/search/readOnly.css",
+      "sha256": "db034535a054fc0c99737c5539493e5bc4ce8af40961eae789859059e2dab269"
+    },
+    {
+      "path": "acode-web/src/search/readOnly.js",
+      "sha256": "b73acef3543e0dd9cdaaa33633c4d54ad6b2d96160754b237d86aea54ee53961"
+    },
+    {
+      "path": "acode-web/vendor/nexus-0.1.20.tgz",
+      "sha256": "dcd77a9a845c1a9874d1a85a00e7e197a5710ba42e27f1db8e551cc9925f6e42"
+    },
+    {
+      "path": "acode-web/vite.config.mjs",
+      "sha256": "60f58574e67d2c7a6c4b828cff3e0d2d1403eea931d1b8fc57b6edb5f8e846bb"
+    },
+    {
+      "path": "docs/api/document-en.md",
+      "sha256": "1efef957d423cbfeefc51948424c7646460c15ec9e212429dec9cd2b68eefbce"
+    },
+    {
+      "path": "docs/api/document-ru.md",
+      "sha256": "1d47ce256c47f7a7c66b21bef988feb4ef59f90208cc97f6fe279f416833ec31"
+    }
+  ],
+  "assets": [
+    {
+      "path": "app/src/main/assets/acode/.vite/acode-runtime-modules.json",
+      "sha256": "98771d818e4788bd7495b9ea51d54f0add7ada97ef604ce628522415abc63051"
+    },
+    {
+      "path": "app/src/main/assets/acode/acode-notices.txt",
+      "sha256": "d603e21cabb04ef5ab3e4c871ca72b614063eb6952ab182a0a7396ddc137077a"
+    },
+    {
+      "path": "app/src/main/assets/acode/assets/editor-CB5efNsb.js",
+      "sha256": "ef853c1ea35614a68428cface0f3e465e9b5dbd1aaa957269b9daea57f36eeac"
+    },
+    {
+      "path": "app/src/main/assets/acode/assets/icons-CaZSEOW7.ttf",
+      "sha256": "b31ee592da1d3b88b580dea6bb3dd2c9f7ff5b679460f3595885c8799242200c"
+    },
+    {
+      "path": "app/src/main/assets/acode/assets/RobotoMono-DvXQnzLo.ttf",
+      "sha256": "c59ecb6c18e38d4194249b6e1c555eb55c8e809258cf6d9b624d19d9268253bf"
+    },
+    {
+      "path": "app/src/main/assets/acode/assets/style-DMRx1cjq.css",
+      "sha256": "8c982d7dd299a3890a308db5f5ec3e7fbdcf4e00a3a7b3938b3e6a36fa553634"
+    },
+    {
+      "path": "app/src/main/assets/acode/editor-boot.js",
+      "sha256": "4667b433ba44bce72e47c0667256088ab35b7e317b1bced824076b3ea3c69a43"
+    },
+    {
+      "path": "app/src/main/assets/acode/editor.html",
+      "sha256": "98b3c475221bbb0cdc8c3292206643c403c35e52df27d68e74cfadb78791bbb5"
+    },
+    {
+      "path": "app/src/main/assets/acode/web-boot.js",
+      "sha256": "348ef7003c44e1dfa7121484b079b918bae8280e9e031d2b99daafd2a401b00d"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/dist-6iP2D5A7.js",
+      "sha256": "b1497b7ae921235a64aaf2adf4c6010454a60f6e574794ce77752f3ce117ee11"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/dist-BhQgIGKk.js",
+      "sha256": "02dd32b4b5b41f5e2c1a90c652340ac636ca168b1aba39e833376edaca6c390d"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/dist-BsrtlZFa.js",
+      "sha256": "46fdd7b685e41e93bbf109850a27c7d12bf5c127106ec68ee3bea8b1a7d8dbd5"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/dist-BXWTR_lS.js",
+      "sha256": "5a6350210013de7a3c3e231805aba29d49a6922c487a18b81633015bc3326279"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/dist-DTh83IvJ.js",
+      "sha256": "983fb9c65057ee1a09481b8977e8f555716b1b84b770c5adf42a9403abac95e2"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/document-D6-13ogR.js",
+      "sha256": "8af385afd408f5dbcbb06aed95ef4ef87c2fbfeed278e8936e97fcd36f9d1bb4"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/dot-CvthSJCy.js",
+      "sha256": "5bde3c728ef395fcc5e609e75bca0af0847678eaaf1bb6c51c513d25341abea3"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/duckdb-DaSSIi26.js",
+      "sha256": "b29044aa4b388fe68bbfaabf5a9b67309f9b85e89ec16f566280201b70e42fa0"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/highlight-CL1Wg8fy.js",
+      "sha256": "02e9de1a08ad03caf74a71eca958b5d62a4acc6df2301f69ac887183ace799eb"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/host-D_axPVRm.js",
+      "sha256": "509ed523e228d9b6fa4f00123b35d8c91df1d0068c1cac580c61aac5f88e1843"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/index-B0zVkwS5.js",
+      "sha256": "a1ac675c38e80c21216497eb21fe6e53d1f9bf037182fb253da386e175d1c4ad"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/index-C2pQ5601.js",
+      "sha256": "766e7f41e7c25a953cd2c4872dcbeb43efae9f492a70736d9b43696dd7ed296b"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/inputs-KeQxNFLu.js",
+      "sha256": "150f54d05905b19032418dc12caebd23245a5ca2dfbdcd26a59f62c6f8eb8ea1"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/leaflet-CiJEybLC.js",
+      "sha256": "7f0dbc254132d05e39071c1cee738b1381f31ac61d8a9bda61c0d62d4b033e0f"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/mapboxgl-C94UFoDx.js",
+      "sha256": "d47ecfd67096bd36f99d502e5969fbca6bfd4cfce0d3c4c79c285d2910006d60"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/md-OHzO-LO1.js",
+      "sha256": "35e7598ff7d87849e786de568470aec146fb4b2336efaf77023314dfa44783b2"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/mermaid-CWCaPgOr.js",
+      "sha256": "6e1f5703940f3c4cab419661abd9f0842839f5a8b52d0711aecda13c462467b6"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/modulepreload-polyfill-B5Qt9EMX.js",
+      "sha256": "d2a32840421496e872ade591618d2fa5c33797605d1aec04301717e5a90757d0"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/sqlite-BuBwYqZg.js",
+      "sha256": "fdf37c63054b04af5e7597501a9b455e9b805633f44957576d2279ca7a9d8c0c"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/style-BorJmlLp.css",
+      "sha256": "1217503984f7751b8cdf75f5c77b8408daa1353ef6459f8b4620e3933a32d26a"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/tex-BE43Lb2g.js",
+      "sha256": "8a43184f2b18170ab163f8b6f3ceb92938b03a59e9a7e62e2494c31f0aeb7b50"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/vega-lite-ClQwpDTB.js",
+      "sha256": "f3d2266c4e762005069b614072b3cd6d687f04091d19b538ed90482b281aaafc"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/xlsx-4IK3iW-B.js",
+      "sha256": "26feeca3f9c52d734b28fe044bb1fd3d2d95a93908f627fc8e22058e0b129c29"
+    },
+    {
+      "path": "app/src/main/assets/document/assets/zip-D7vE9oCB.js",
+      "sha256": "3bb39d045b15a2b536f17190971817afd3057d5b60e53ab846bd5a300822b509"
+    },
+    {
+      "path": "app/src/main/assets/document/document-host.html",
+      "sha256": "e7dc60c28421809e51c35acbeda29ddec087ade8c9fe7e6538a9830018447c8e"
+    },
+    {
+      "path": "app/src/main/assets/document/document.html",
+      "sha256": "d548bba6b167a822bb65c5ce4145cd2941107346cd869b567c20770642abb3d6"
+    },
+    {
+      "path": "app/src/main/assets/document/THIRD_PARTY_NOTICES.txt",
+      "sha256": "09511a56459288f782fab3dced9e909a1cf1a96058ec3c6bbada6bcc5914888e"
+    },
+    {
+      "path": "app/src/main/assets/help/document-en.md",
+      "sha256": "e8eb933190b7bfa6eca5c573a6f8c5307bd327a89911d807c39c2954207c3419"
+    },
+    {
+      "path": "app/src/main/assets/help/document-ru.md",
+      "sha256": "45928e5a6b18981a1f7604451325ade3b02d2ab303550558aa12108e0e0310f5"
+    }
+  ]
+}

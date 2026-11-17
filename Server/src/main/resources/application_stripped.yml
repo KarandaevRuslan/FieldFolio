@@ -1,6 +1,6 @@
 spring:
   application:
-    name: roadCrackDetectionServer
+    name: GeoInspectServer
   main:
     banner-mode: "off"
 
@@ -37,7 +37,7 @@ firebase:
 # ---------------- Avatar ----------------
 
 avatar-storage:
-  directory: "C:/Users/secre/Documents/road-crack-server-data/avatars"
+  directory: "C:/Users/secre/Documents/geoinspect-server-data/avatars"
   public-base-url: ""
 
 yolo:
@@ -109,10 +109,10 @@ rate-limit:
         refillTokens: 10
         refillPeriodSeconds: 60
 
-    #      userPerSecond:
-    #        capacity: 5
-    #        refillTokens: 5
-    #        refillPeriodSeconds: 1
+      userPerSecond:
+        capacity: 5
+        refillTokens: 5
+        refillPeriodSeconds: 1
 
     - id: "avatar-get"
       method: "GET"
@@ -127,10 +127,10 @@ rate-limit:
         refillTokens: 120
         refillPeriodSeconds: 60
 
-    #      userPerSecond:
-    #        capacity: 10
-    #        refillTokens: 10
-    #        refillPeriodSeconds: 1
+      userPerSecond:
+        capacity: 10
+        refillTokens: 10
+        refillPeriodSeconds: 1
 
     - id: "avatar-upload"
       method: "POST"
@@ -145,10 +145,10 @@ rate-limit:
         refillTokens: 10
         refillPeriodSeconds: 60
 
-    #      userPerSecond:
-    #        capacity: 3
-    #        refillTokens: 3
-    #        refillPeriodSeconds: 1
+      userPerSecond:
+        capacity: 3
+        refillTokens: 3
+        refillPeriodSeconds: 1
 
     - id: "avatar-reset"
       method: "DELETE"
@@ -163,10 +163,10 @@ rate-limit:
         refillTokens: 30
         refillPeriodSeconds: 60
 
-    #      userPerSecond:
-    #        capacity: 5
-    #        refillTokens: 5
-    #        refillPeriodSeconds: 1
+      userPerSecond:
+        capacity: 5
+        refillTokens: 5
+        refillPeriodSeconds: 1
 
     - id: "default"
       method: "ANY"
@@ -194,7 +194,7 @@ rate-limit:
         refillTokens: 60
         refillPeriodSeconds: 60
 
-#      userPerSecond:
-#        capacity: 10
-#        refillTokens: 10
-#        refillPeriodSeconds: 1
+      userPerSecond:
+        capacity: 10
+        refillTokens: 10
+        refillPeriodSeconds: 1

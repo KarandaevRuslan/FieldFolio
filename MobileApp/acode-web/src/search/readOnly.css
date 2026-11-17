@@ -1,0 +1,15 @@
+/* One panel shared by read-only Acode and rendered documents. No write/replace controls. */
+.folio-find {position:fixed;inset:0 0 auto;z-index:10000;display:flex;flex-direction:column;gap:2px;margin:0;padding:4px 8px;background:var(--secondary-color,var(--card));color:var(--secondary-text-color,var(--fg));border-bottom:1px solid var(--border-color,var(--line));box-shadow:0 3px 12px #0002;font:14px system-ui,sans-serif;box-sizing:border-box;}
+.folio-find[hidden] {display:none!important;}
+.folio-find-row,.folio-find-options {display:flex;align-items:center;gap:4px;min-width:0;}
+.folio-find input {flex:1 1 0;min-width:0;width:0;height:40px;box-sizing:border-box;border:1px solid var(--border-color,var(--line));border-radius:10px;padding:0 10px;background:var(--secondary-color,var(--bg));color:inherit;font:inherit;}
+.folio-find button {flex:0 0 40px;width:40px;height:40px;min-height:40px;margin:0;padding:0;border:0;border-radius:10px;background:transparent;color:inherit;font:20px system-ui,sans-serif;touch-action:manipulation;}
+.folio-find button:disabled {opacity:.35;}
+.folio-find button[aria-pressed='true'],.folio-find button[aria-expanded='true'] {background:var(--active-icon-color,var(--soft));color:var(--active-color,var(--accent));}
+.folio-find button:focus-visible {outline:2px solid var(--active-color,var(--accent));outline-offset:-2px;}
+.folio-find-options {justify-content:flex-end;min-height:24px;}
+.folio-find-options button {display:none;font-size:14px;}
+.folio-find-options.expanded button {display:block;}
+.folio-find output {font-size:12px;white-space:nowrap;min-width:60px;text-align:right;padding:0 4px;}
+html[data-mini='true'] .folio-find {display:none!important;}
+html[data-find='true']:not([data-mini='true']) #notebook {padding-top:var(--folio-find-height,80px);}

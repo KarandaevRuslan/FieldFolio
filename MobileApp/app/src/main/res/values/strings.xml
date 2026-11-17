@@ -1,12 +1,12 @@
 <resources>
     <!-- App -->
 
-    <string name="app_name">GeoInspect</string>
+    <string name="app_name">Fieldfolio</string>
 
 
     <!-- Destinations -->
 
-    <string name="destination_home">Geo Inspect</string>
+    <string name="destination_home">Fieldfolio</string>
     <string name="destination_map">Map</string>
     <string name="destination_detection">Detection</string>
     <string name="destination_profile">Profile</string>
@@ -22,8 +22,6 @@
 
 
     <!-- Home -->
-
-    <string name="home_inspection_reports_section_title">MY REPORTS</string>
     <string name="home_digital_clock_title">Local time</string>
     <string name="home_digital_clock_content_description">Current local time: %1$s</string>
 
@@ -37,35 +35,8 @@
 
     <!-- Create / Edit inspection report -->
 
-    <string name="create_inspection_report_title_label">Title</string>
-    <string name="create_inspection_report_title_placeholder">Enter inspection report title…</string>
-    <string name="create_inspection_report_title_required">Title is required</string>
-
-    <string name="create_inspection_report_description_label">Description</string>
-    <string name="create_inspection_report_description_placeholder">Describe detected road or street damage…</string>
-
-    <string name="create_inspection_report_location_label">Location</string>
-    <string name="create_inspection_report_location_hint">Tap the map to select a point</string>
-    <string name="create_inspection_report_getting_current_location">Getting current location…</string>
-    <string name="create_inspection_report_use_current_location">Use current location</string>
-
-    <string name="create_inspection_report_save_button">Save</string>
-
-    <string name="create_detection_section_title">Detection</string>
-    <string name="create_detection_add">Add detection</string>
-    <string name="create_detection_run_again">Run detection again</string>
-    <string name="create_detection_clear">Clear detection</string>
-
 
     <!-- View inspection report -->
-
-    <string name="view_delete_report_dialog_title">Delete report?</string>
-    <string name="view_delete_report_dialog_message">"%1$s" will be permanently deleted. This action cannot be undone.</string>
-    <string name="view_delete_report_dialog_untitled">Untitled report</string>
-    <string name="view_delete_report_dialog_confirm">Delete</string>
-    <string name="view_delete_report_dialog_cancel">Cancel</string>
-    <string name="view_delete_report_dialog_confirmation_label">Confirmation</string>
-    <string name="view_delete_report_dialog_confirmation_prompt">Type %1$s to confirm deletion.</string>
 
 
     <!-- Detection preview -->
@@ -77,8 +48,6 @@
     <string name="inspection_report_detection_preview_no_detections">No detection results for this report yet.</string>
     <string name="inspection_report_detection_preview_placeholder">Image not found</string>
     <string name="inspection_report_detection_preview_image_content_description">Inspection report image</string>
-
-    <string name="detection_preview_details_title">Detection details</string>
     <string name="detection_preview_details_title_with_count">Detections: %1$d</string>
     <string name="detection_preview_details_close_content_description">Close detection preview</string>
 
@@ -86,14 +55,9 @@
     <string name="detection_preview_details_image_size">Size: %1$d × %2$d px</string>
     <string name="detection_preview_details_image_size_unknown">Size: unknown</string>
     <string name="detection_preview_details_aspect_ratio">Aspect ratio: %1$s</string>
-    <string name="detection_preview_details_detections_count">Detections: %1$d</string>
 
     <string name="detection_preview_details_boxes_title">Boxes</string>
     <string name="detection_preview_details_no_boxes">No boxes</string>
-    <string name="detection_preview_details_box_title">%1$d. %2$s</string>
-    <string name="detection_preview_details_box_item">%1$d. %2$s • %3$s • x: %4$s–%5$s, y: %6$s–%7$s</string>
-    <string name="detection_preview_details_confidence">Confidence: %1$s</string>
-    <string name="detection_preview_details_box_coordinates">x: %1$s–%2$s, y: %3$s–%4$s</string>
 
     <string name="detection_preview_details_box_compact_title">#%1$d %2$s · %3$s</string>
     <string name="detection_preview_details_box_normalized_compact">norm: %1$s · area %2$s</string>
@@ -215,11 +179,11 @@
 
     <string name="settings_data_section_title">Data</string>
     <string name="settings_data_import_reports">Import reports</string>
-    <string name="settings_data_import_reports_description">Load inspection reports from a JSON file</string>
+    <string name="settings_data_import_reports_description">Load inspection reports from an archive or JSON file</string>
     <string name="settings_data_import_reports_success">Inspection reports imported.</string>
 
     <string name="settings_data_export_reports">Export reports</string>
-    <string name="settings_data_export_reports_description">Save all inspection reports to a JSON file</string>
+    <string name="settings_data_export_reports_description">Save all inspection reports to an archive</string>
     <string name="settings_data_export_reports_success">Inspection reports exported.</string>
 
     <string name="settings_data_reset_reports">Reset data</string>
@@ -233,8 +197,8 @@
 
     <!-- Settings about -->
 
-    <string name="settings_about_app_title">GeoInspect v%1$s</string>
-    <string name="settings_about_app_description">An app for creating inspection reports linked to geographic points on the map, with support for images and detection results.</string>
+    <string name="settings_about_app_title">Fieldfolio v%1$s</string>
+    <string name="settings_about_app_description">Fieldfolio brings model analysis into ordered multimedia reports. Organize reports and resources in folders, run local and server models, inspect visual results, add maps, weather, clocks, audio and interactive Observable/Nexus documents, and share protected archives.</string>
     <string name="settings_about_app_developer">Developed by Karandaev Ruslan.</string>
 
 
@@ -243,4 +207,5 @@
     <string name="confirmation_word_field_label">Confirmation</string>
     <string name="reset_confirmation_word_field_prompt">Type %1$s to confirm reset.</string>
 
+  <string name="v22_to_top">Scroll to top</string>
 </resources>

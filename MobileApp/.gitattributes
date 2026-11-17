@@ -1,0 +1,13 @@
+* text=auto eol=lf
+*.bat text eol=crlf
+*.jar binary
+*.tgz binary
+*.tflite binary
+*.ttf binary
+*.woff2 binary
+*.png binary
+*.jpg binary
+*.webp binary
+third_party/** -whitespace
+acode-web/third_party/** -whitespace
+acode-web/src/acode/vendor/** -whitespace

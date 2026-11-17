@@ -33,7 +33,15 @@ async def infer(request: Request):
     """
     img_bytes = await request.body()
     img = Image.open(io.BytesIO(img_bytes)).convert("RGB")
-    results = model.predict(img, verbose=False)
+    results = model.predict(
+        img,
+        imgsz=768,
+        conf=0.25,
+        iou=0.45,
+        max_det=300,
+        agnostic_nms=False,
+        verbose=False,
+    )
 
     dets = []
     r = results[0]
