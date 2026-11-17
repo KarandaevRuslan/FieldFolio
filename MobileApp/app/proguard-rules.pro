@@ -1,177 +1,125 @@
-# Rules for R8 / ProGuard when building a release with isMinifyEnabled = true.
-# Used by app/build.gradle.kts:
-# release {
-#     isMinifyEnabled = true
-#     isShrinkResources = true
-# }
+# Fieldfolio release R8 rules.
+# Used with the default Android optimized rules in app/build.gradle.kts.
+# Keep release shrinking and obfuscation enabled; preserve only runtime contracts.
 
-# ---------------------------------------------------------------------
-# Kotlin metadata / annotations
-# ---------------------------------------------------------------------
--keepattributes Signature
--keepattributes *Annotation*
--keepattributes InnerClasses
--keepattributes EnclosingMethod
--keepattributes Exceptions
--keepattributes RuntimeVisibleAnnotations
--keepattributes RuntimeVisibleParameterAnnotations
--keepattributes AnnotationDefault
+# ---------------------------------------------------------------------------
+# Kotlin signatures, generic types and runtime annotations used by serializers
+# and Retrofit. R8/AGP and libraries also contribute their own consumer rules.
+# ---------------------------------------------------------------------------
+-keepattributes Signature,*Annotation*,InnerClasses,EnclosingMethod,Exceptions
 
+# Preserve existing Kotlin metadata/coroutine safeguards for compatibility.
 -keepclassmembers class kotlin.Metadata {
     public <methods>;
 }
+-keepclassmembers class kotlinx.coroutines.** {
+    volatile <fields>;
+}
 
-# ---------------------------------------------------------------------
-# AndroidX / AppCompat / Material
-# ---------------------------------------------------------------------
--dontwarn androidx.appcompat.**
--dontwarn com.google.android.material.**
+# ---------------------------------------------------------------------------
+# Moshi (KSP generated adapters and reflection)
+# ---------------------------------------------------------------------------
+# Moshi looks up the generated FooJsonAdapter constructor by reflection.
+# Retain the model and adapter names; retaining adapter members also covers
+# generated adapters that are reached indirectly from nested DTOs.
+-keep @com.squareup.moshi.JsonClass class * { *; }
 
-# ---------------------------------------------------------------------
-# Jetpack Compose
-# AGP and Compose usually provide most required rules automatically.
-# ---------------------------------------------------------------------
--dontwarn androidx.compose.**
+-if @com.squareup.moshi.JsonClass class *
+-keep class <1>JsonAdapter { *; }
 
-# ---------------------------------------------------------------------
-# Firebase / Google Play Services
-# Firebase libraries usually ship consumer ProGuard rules,
-# but these dontwarn lines prevent noisy release builds.
-# ---------------------------------------------------------------------
--dontwarn com.google.firebase.**
--dontwarn com.google.android.gms.**
--dontwarn com.google.android.play.core.**
+# Moshi's EnumJsonAdapter looks up enum constants via Class.getField(name).
+# Its runtime lookup requires fields such as DETECTION and FOLDER to retain
+# their original names. Kotlin @JsonClass(generateAdapter = true) on an outer
+# DTO does NOT protect the unannotated enum types inside it.
+# Preserve all *Fieldfolio* enums (including nested enums) as one policy,
+# instead of chasing each startup NoSuchFieldException separately.
+# This intentionally does NOT keep all app classes or disable R8 globally.
+-keep enum com.karandaev.fieldfolio.** { *; }
 
-# ---------------------------------------------------------------------
-# Room
-# ---------------------------------------------------------------------
+# For custom Moshi adapters supplied via @ToJson / @FromJson.
+-keepclassmembers class * {
+    @com.squareup.moshi.ToJson <methods>;
+    @com.squareup.moshi.FromJson <methods>;
+}
+-keep @com.squareup.moshi.JsonQualifier @interface *
+
+# Annotation processors produce consumer R8 rules, but this prevents
+# spurious missing-annotation warnings from optional JSR-305 dependencies.
+-dontwarn javax.annotation.**
+
+# ---------------------------------------------------------------------------
+# Gson (some Retrofit endpoints use converter-gson)
+# ---------------------------------------------------------------------------
+-keep class com.google.gson.reflect.TypeToken { *; }
+-keep class * extends com.google.gson.reflect.TypeToken
+-keepclassmembers,allowobfuscation class * {
+    @com.google.gson.annotations.SerializedName <fields>;
+}
+
+# ---------------------------------------------------------------------------
+# Retrofit: service interfaces are implemented with dynamic proxies.
+# ---------------------------------------------------------------------------
+-keep,allowobfuscation,allowshrinking interface retrofit2.Call
+-keep,allowobfuscation,allowshrinking class retrofit2.Response
+-keepclasseswithmembers,includedescriptorclasses class * {
+    @retrofit2.http.* <methods>;
+}
+-keepclassmembers,allowshrinking,allowobfuscation interface * {
+    @retrofit2.http.* <methods>;
+}
+
+# ---------------------------------------------------------------------------
+# Room. Keep the existing conservative policy for the current Room database.
+# Its generated implementations are used indirectly.
+# ---------------------------------------------------------------------------
 -keep class androidx.room.** { *; }
 -keep @androidx.room.Entity class * { *; }
 -keep class * extends androidx.room.RoomDatabase { <init>(...); }
-
 -keepclassmembers class ** {
     @androidx.room.* <methods>;
 }
-
 -keepclassmembers class * {
     @androidx.room.ColumnInfo <fields>;
     @androidx.room.PrimaryKey <fields>;
     @androidx.room.Embedded <fields>;
     @androidx.room.Relation <fields>;
 }
-
 -keep class **_Impl { *; }
 
+# ---------------------------------------------------------------------------
+# osmdroid: runtime reflection is used inside the map library.
+# ---------------------------------------------------------------------------
+-keep class org.osmdroid.** { *; }
+-dontwarn org.osmdroid.**
+-dontwarn org.apache.http.**
+-dontwarn org.slf4j.**
+
+# ---------------------------------------------------------------------------
+# Optional/platform classes referenced by libraries in some configurations.
+# Keep these suppressions from the previous release rules for compatibility;
+# actual required classes must still be supplied by Gradle dependencies.
+# ---------------------------------------------------------------------------
+-dontwarn androidx.appcompat.**
+-dontwarn com.google.android.material.**
+-dontwarn androidx.compose.**
+-dontwarn com.google.firebase.**
+-dontwarn com.google.android.gms.**
+-dontwarn com.google.android.play.core.**
 -dontwarn androidx.room.paging.**
-
-# ---------------------------------------------------------------------
-# Moshi with KSP codegen
-# ---------------------------------------------------------------------
-# Official Moshi/R8 rules are mostly supplied by Moshi itself,
-# but these help when DTOs/adapters are used reflectively or from Retrofit.
--keep,allowobfuscation,allowshrinking @interface com.squareup.moshi.JsonClass
-
--keep @com.squareup.moshi.JsonClass class * { *; }
-
--keepclassmembers @com.squareup.moshi.JsonClass class * {
-    @com.squareup.moshi.Json <fields>;
-}
-
--if @com.squareup.moshi.JsonClass class *
--keep class <1>JsonAdapter {
-    <init>(...);
-    <fields>;
-}
-
--dontwarn com.squareup.moshi.**
--dontwarn javax.annotation.**
-
-# ---------------------------------------------------------------------
-# Gson
-# ---------------------------------------------------------------------
-# Needed if Retrofit converter-gson is used for your API DTOs.
-# If your DTOs use @SerializedName, keep annotated fields.
--keepattributes Signature
--keepattributes *Annotation*
-
--keep class com.google.gson.reflect.TypeToken { *; }
--keep class * extends com.google.gson.reflect.TypeToken
-
--keepclassmembers,allowobfuscation class * {
-    @com.google.gson.annotations.SerializedName <fields>;
-}
-
--dontwarn sun.misc.**
-
-# ---------------------------------------------------------------------
-# Retrofit
-# ---------------------------------------------------------------------
-# Keep service interface methods with @retrofit2.http.* annotations;
-# otherwise R8 may strip information Retrofit needs to build requests.
--keep,allowobfuscation,allowshrinking interface retrofit2.Call
--keep,allowobfuscation,allowshrinking class retrofit2.Response
-
--keepclasseswithmembers,includedescriptorclasses class * {
-    @retrofit2.http.* <methods>;
-}
-
--keepclassmembers,allowshrinking,allowobfuscation interface * {
-    @retrofit2.http.* <methods>;
-}
-
 -dontwarn retrofit2.**
--dontwarn javax.annotation.Nullable
--dontwarn javax.annotation.ParametersAreNonnullByDefault
-
-# ---------------------------------------------------------------------
-# OkHttp / Okio
-# ---------------------------------------------------------------------
-# OkHttp includes its own consumer rules, but these are common safe additions.
 -dontwarn okhttp3.**
 -dontwarn okio.**
 -dontwarn org.codehaus.mojo.animal_sniffer.*
 -dontwarn org.conscrypt.**
 -dontwarn org.bouncycastle.**
 -dontwarn org.openjsse.**
-
-# ---------------------------------------------------------------------
-# Kotlin Coroutines
-# ---------------------------------------------------------------------
--keepclassmembers class kotlinx.coroutines.** {
-    volatile <fields>;
-}
-
+-dontwarn sun.misc.**
 -dontwarn kotlinx.coroutines.**
-
-# ---------------------------------------------------------------------
-# Coil
-# ---------------------------------------------------------------------
 -dontwarn coil.**
-
-# ---------------------------------------------------------------------
-# osmdroid
-# ---------------------------------------------------------------------
-# osmdroid uses reflection in several places.
--keep class org.osmdroid.** { *; }
--dontwarn org.osmdroid.**
-
-# osmdroid may reference optional Apache HTTP / SLF4J classes depending on usage.
--dontwarn org.apache.http.**
--dontwarn org.slf4j.**
-
-# ---------------------------------------------------------------------
-# App models / API DTOs
-# ---------------------------------------------------------------------
-# If your network/database model classes are in specific packages,
-# keeping them reduces risk with Gson/Moshi/Room reflection.
-# Adjust package names if your project uses different folders.
--keep class com.karandaev.roadCrackDetector.data.** { *; }
--keep class com.karandaev.roadCrackDetector.domain.model.** { *; }
--keep class com.karandaev.roadCrackDetector.model.** { *; }
--keep class com.karandaev.roadCrackDetector.network.** { *; }
-
-# ---------------------------------------------------------------------
-# Tests / debug-only references
-# ---------------------------------------------------------------------
 -dontwarn org.junit.**
 -dontwarn org.hamcrest.**
+
+# ---------------------------------------------------------------------------
+# No legacy com.karandaev.roadCrackDetector rules: package renamed to
+# com.karandaev.fieldfolio; obsolete rules matched no app classes.
+# ---------------------------------------------------------------------------
