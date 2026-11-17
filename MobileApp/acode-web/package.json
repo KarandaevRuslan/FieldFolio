@@ -38,7 +38,7 @@
   "devDependencies": {
     "@babel/core": "^7.28.5",
     "@babel/parser": "^7.28.5",
-    "esbuild": "^0.25.12",
+    "esbuild": "^0.28.2",
     "happy-dom": "^20.0.10",
     "jsdom": "^26.1.0",
     "sass": "^1.93.3",
