@@ -419,6 +419,10 @@ class FinalUiRegressionTest {
     assertTrue(field.right < 500f)
     val wrap = compose.onNodeWithText("Wrap lines in Acode").fetchSemanticsNode().boundsInRoot
     assertTrue(wrap.left < 450f)
+    val audio = compose.onNodeWithText("Audio").fetchSemanticsNode().boundsInRoot
+    val map = compose.onNodeWithText("Map").fetchSemanticsNode().boundsInRoot
+    assertTrue(map.left > 450f)
+    assertTrue(map.top > audio.top)
     snapshot("text-settings-landscape")
   }
 

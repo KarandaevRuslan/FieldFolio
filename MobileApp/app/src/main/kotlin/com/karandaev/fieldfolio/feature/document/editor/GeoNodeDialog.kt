@@ -10,7 +10,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.karandaev.fieldfolio.core.di.rememberAppServices
+import com.karandaev.fieldfolio.core.datarefresh.rememberDeviceFix
 import com.karandaev.fieldfolio.core.document.*
 import com.karandaev.fieldfolio.core.domain.model.location.MapPoint
 import com.karandaev.fieldfolio.core.ui.components.actions.HintIconButton
@@ -33,15 +33,10 @@ fun GeoNodeDialog(node: DocumentNode, dismiss: () -> Unit, save: (DocumentNode, 
   var lon by rememberSession(node.id) { mutableStateOf(node.longitude?.toString().orEmpty()) }
   var picker by rememberSession { mutableStateOf(false) }
   var preview by rememberSession { mutableStateOf(false) }
-  val app = rememberAppServices()
   val audio = rememberSession { DocumentAudioSession() }
   DisposableEffect(audio) { onDispose { audio.close() } }
-  val current by
-    produceState<MapPoint?>(null, device) {
-      if (device)
-        value =
-          app.deviceLocationProvider.getLocation()?.let { MapPoint(it.latitude, it.longitude) }
-    }
+  val location = rememberDeviceFix(active = device)
+  val current = if (device) location.point else null
   val latitude = lat.toDoubleOrNull()?.takeIf { it.isFinite() && it in -90.0..90.0 }
   val longitude = lon.toDoubleOrNull()?.takeIf { it.isFinite() && it in -180.0..180.0 }
   val point =

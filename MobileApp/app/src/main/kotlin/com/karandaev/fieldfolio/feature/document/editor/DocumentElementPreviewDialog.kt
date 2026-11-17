@@ -1,9 +1,16 @@
-@file:OptIn(androidx.compose.material3.ExperimentalMaterial3Api::class)
+@file:OptIn(
+  androidx.compose.material3.ExperimentalMaterial3Api::class,
+  androidx.compose.material.ExperimentalMaterialApi::class,
+)
 
 package com.karandaev.fieldfolio.feature.document.editor
 
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material.pullrefresh.*
+import com.karandaev.fieldfolio.core.datarefresh.LocalRefreshScope
+import com.karandaev.fieldfolio.core.datarefresh.rememberRefreshScope
+import kotlinx.coroutines.launch
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.material3.*
@@ -36,6 +43,11 @@ fun DocumentElementPreviewDialog(
   update: ((DocumentNode) -> Unit)? = null,
   edit: (() -> Unit)? = null,
 ) {
+  val previewRefresh = rememberRefreshScope()
+  val scope = rememberCoroutineScope()
+  val pull = rememberPullRefreshState(previewRefresh.refreshing, {
+    scope.launch { previewRefresh.refresh() }
+  })
   var rename by rememberViewerSession("preview-rename") { mutableStateOf(false) }
   @Composable
   fun RowScope.Actions() {
@@ -67,6 +79,7 @@ fun DocumentElementPreviewDialog(
     )
   } else
     SafeAppDialog(dismiss) {
+      CompositionLocalProvider(LocalRefreshScope provides previewRefresh) {
       Scaffold(
         Modifier.testTag("element-preview-window"),
         contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -83,7 +96,12 @@ fun DocumentElementPreviewDialog(
           )
         },
       ) { pad ->
-        Box(Modifier.fillMaxSize().padding(pad), contentAlignment = Alignment.Center) {
+        Box(
+          Modifier.fillMaxSize().padding(pad).then(
+            if (previewRefresh.hasRefreshableNeeds) Modifier.pullRefresh(pull) else Modifier
+          ),
+          contentAlignment = Alignment.Center,
+        ) {
           Column(
             Modifier.widthIn(max = if (node.kind == BlockKind.AUDIO) 440.dp else 560.dp)
               .fillMaxWidth()
@@ -101,7 +119,10 @@ fun DocumentElementPreviewDialog(
               editorPreview = true,
             )
           }
+          if (previewRefresh.hasRefreshableNeeds)
+            PullRefreshIndicator(previewRefresh.refreshing, pull, Modifier.align(Alignment.TopCenter))
         }
+      }
       }
     }
   if (rename && update != null)

@@ -208,4 +208,15 @@
     <string name="reset_confirmation_word_field_prompt">Type %1$s to confirm reset.</string>
 
   <string name="v22_to_top">Scroll to top</string>
+    <string name="settings_map_show_center">Show current map center</string>
+    <string name="settings_map_show_center_description">Include the current map center in Focus destination.</string>
+    <string name="map_last_fix">Last fix: %1$d min ago</string>
+    <string name="map_fix_age">Position determined %1$d sec ago</string>
+    <string name="map_my_current_location">My current location</string>
+    <string name="map_my_last_location">My last known location</string>
+    <string name="map_grant_location_for_map">Allow location for this map</string>
+    <string name="map_locating_device">Determining my location…</string>
+    <string name="map_retry_device_location">Refresh my location</string>
+    <string name="weather_previous_after_error">Weather update failed — showing earlier data</string>
+    <string name="weather_previous_stale">Weather data may be outdated</string>
 </resources>

@@ -1,9 +1,16 @@
 package com.karandaev.fieldfolio.feature.shared.components.cards
 
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Cloud
+import androidx.compose.material.icons.filled.Refresh
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -33,6 +40,9 @@ fun WeatherCard(
   modifier: Modifier = Modifier,
   onRetry: (() -> Unit)? = null,
   compact: Boolean = false,
+  isRefreshing: Boolean = false,
+  refreshEnabled: Boolean = true,
+  statusText: String? = null,
 ) {
   val contentColor = Color.White
   val contentMinHeight = if (compact) 56.dp else 72.dp
@@ -66,7 +76,7 @@ fun WeatherCard(
           title = stringResource(R.string.ui_location_is_unknown),
           message = locationState.message,
           minHeight = contentMinHeight,
-          onRetry = onRetry,
+          onRetry = if (isRefreshing || !refreshEnabled) null else onRetry,
           titleColor = contentColor,
           messageColor = contentColor.copy(alpha = 0.9f),
           actionColor = contentColor,
@@ -98,6 +108,7 @@ fun WeatherCard(
           is WeatherUiState.Success -> {
             val uiModel = weatherState.toWeatherCardUiModel(locatedPlace = locationState.data)
 
+            Column {
             AppCardContent(
               title = uiModel.temperature,
               subtitle = stringResource(uiModel.descriptionRes),
@@ -123,6 +134,19 @@ fun WeatherCard(
               titleMaxLines = 1,
               subtitleMaxLines = 1,
               supportingTextMaxLines = 1,
+              trailingContent = if (onRetry == null) null else {
+                {
+                  IconButton(onClick = onRetry, enabled = !isRefreshing && refreshEnabled) {
+                    if (isRefreshing) CircularProgressIndicator(
+                      modifier = Modifier.size(20.dp), strokeWidth = 2.dp, color = contentColor
+                    ) else Icon(
+                      Icons.Default.Refresh,
+                      contentDescription = stringResource(R.string.doc_refresh),
+                      tint = contentColor,
+                    )
+                  }
+                }
+              },
               leadingContent = {
                 AppCardMediaContent(
                   media = uiModel.icon,
@@ -133,6 +157,13 @@ fun WeatherCard(
                 )
               },
             )
+            if (!statusText.isNullOrBlank()) Text(
+              statusText,
+              modifier = Modifier.padding(top = 6.dp),
+              style = MaterialTheme.typography.labelSmall,
+              color = contentColor,
+            )
+            }
           }
         }
       }

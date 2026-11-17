@@ -8,6 +8,11 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
+import com.karandaev.fieldfolio.core.datarefresh.DeviceFixState
+import com.karandaev.fieldfolio.core.datarefresh.rememberDeviceFix
+import com.karandaev.fieldfolio.core.di.rememberAppServices
+import kotlinx.coroutines.launch
 import com.karandaev.fieldfolio.core.location.LocatedPlace
 import com.karandaev.fieldfolio.core.location.place.PlaceNameProvider
 import com.karandaev.fieldfolio.core.location.resolver.LocationResolver
@@ -24,7 +29,7 @@ private const val LastLocatedPlaceMaxAgeMillis = 24 * 60 * 60 * 1_000L
  *
  * Owns:
  * - location resolving;
- * - optional background location polling;
+ * - shared (application-scoped) device location polling;
  * - fallback to the last saved location when current location is unknown;
  * - initial map focus after the first successful location resolve;
  * - explicit focus requests from the map focus button.
@@ -35,14 +40,15 @@ class MapLocationController
 internal constructor(
   val locationState: LocationUiState,
   val focusRequest: Int,
+  val isStale: Boolean = false,
   private val focusLocationAction: () -> Unit,
 ) {
 
   /**
    * Requests the map to focus on the current location target.
    *
-   * Also starts silent polling through the location controller. The actual focus target is provided
-   * to the map through [locationState].
+   * The shared resource coordinator handles active device polling.
+   * The actual focus target is provided to the map through [locationState].
    */
   fun focusLocation() {
     focusLocationAction()
@@ -68,6 +74,9 @@ fun rememberMapLocationController(
   enablePolling: Boolean = true,
 ): MapLocationController {
   val lastLocatedPlace by persistedAppStateViewModel.lastLocatedPlace.collectAsState()
+  val sharedFix = rememberDeviceFix(active = enablePolling, includeInPull = false)
+  val app = rememberAppServices()
+  val coroutineScope = rememberCoroutineScope()
 
   val locationController =
     rememberLocationController(
@@ -82,7 +91,8 @@ fun rememberMapLocationController(
   return rememberMapLocationController(
     locationController = locationController,
     fallbackLocatedPlace = lastLocatedPlace,
-    enablePolling = enablePolling,
+    sharedFix = sharedFix,
+    sharedFocus = { coroutineScope.launch { app.resourceCoordinator.refreshLocation(force = true) } },
   )
 }
 
@@ -113,7 +123,6 @@ fun rememberMapLocationController(
   return rememberMapLocationController(
     locationController = locationController,
     fallbackLocatedPlace = null,
-    enablePolling = enablePolling,
   )
 }
 
@@ -127,7 +136,8 @@ fun rememberMapLocationController(
 private fun rememberMapLocationController(
   locationController: LocationController,
   fallbackLocatedPlace: LocatedPlace?,
-  enablePolling: Boolean,
+  sharedFix: DeviceFixState? = null,
+  sharedFocus: (() -> Unit)? = null,
 ): MapLocationController {
   var focusRequest by rememberSaveable { mutableIntStateOf(0) }
 
@@ -137,8 +147,19 @@ private fun rememberMapLocationController(
 
   val actualLocationState = locationController.locationState
 
+  // Main map follows the same GPS snapshot as document widgets and focus menus.
+  val currentShared = sharedFix?.location?.takeIf {
+    val age = System.currentTimeMillis() - (it.timestampMillis ?: 0L)
+    age in 0..LastLocatedPlaceMaxAgeMillis
+  }
+  val sharedUi = currentShared?.let {
+    LocationUiState.Success(
+      data = LocatedPlace(it, fallbackLocatedPlace?.placeName.orEmpty()),
+      refreshId = it.timestampMillis ?: 0L,
+    )
+  }
   val displayLocationState =
-    actualLocationState.withFallbackLocatedPlace(fallbackLocatedPlace = fallbackLocatedPlace)
+    (sharedUi ?: actualLocationState).withFallbackLocatedPlace(fallbackLocatedPlace = fallbackLocatedPlace)
 
   val fallbackSuccessState = displayLocationState as? LocationUiState.Success
   val actualSuccessState = actualLocationState as? LocationUiState.Success
@@ -161,14 +182,12 @@ private fun rememberMapLocationController(
     }
   }
 
-  if (enablePolling && locationController.hasLocationPermission) {
-    MapLocationPollingEffect(pollLocation = { locationController.pollLocation() })
-  }
-
+  // Legacy per-screen GPS timer is intentionally not started. Shared resource owns polling.
   return MapLocationController(
     locationState = displayLocationState,
     focusRequest = focusRequest,
-    focusLocationAction = { locationController.pollLocation() },
+    isStale = sharedFix?.let { !it.isCurrent() } ?: false,
+    focusLocationAction = sharedFocus ?: { locationController.pollLocation() },
   )
 }
 

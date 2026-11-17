@@ -5,6 +5,7 @@ import com.karandaev.fieldfolio.core.domain.repository.PersistedAppStateReposito
 import com.karandaev.fieldfolio.core.location.AppLocation
 import com.karandaev.fieldfolio.core.location.LocatedPlace
 import com.karandaev.fieldfolio.core.location.mapper.toMapPoint
+import kotlinx.coroutines.flow.first
 
 /**
  * Location resolver decorator that stores the last successfully resolved real device location.
@@ -52,11 +53,17 @@ class CachingLocationResolver(
 
   /** Saves the located place as the last known real device location. */
   private suspend fun cacheLocatedPlace(locatedPlace: LocatedPlace) {
+    val measuredAt = locatedPlace.location.timestampMillis?.takeIf { it > 0L }
+      ?: currentTimeMillis()
+    // A legacy location resolver and the shared coordinator can both write this record.
+    // Never let an old framework cache read overwrite a newer fix after a screen resumes.
+    val previous = persistedAppStateRepository.observeLastKnownLocation().first()
+    if (previous != null && previous.updatedAt > measuredAt) return
     persistedAppStateRepository.setLastKnownLocation(
       LastKnownLocation(
         point = locatedPlace.toMapPoint(),
         placeName = locatedPlace.placeName,
-        updatedAt = currentTimeMillis(),
+        updatedAt = measuredAt,
       )
     )
   }

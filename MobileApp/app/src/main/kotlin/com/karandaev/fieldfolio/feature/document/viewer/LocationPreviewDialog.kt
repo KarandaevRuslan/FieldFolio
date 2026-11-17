@@ -9,6 +9,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.karandaev.fieldfolio.core.document.*
 import com.karandaev.fieldfolio.core.domain.model.location.MapPoint
+import com.karandaev.fieldfolio.core.datarefresh.rememberDeviceFix
 import com.karandaev.fieldfolio.core.ui.components.actions.HintIconButton
 import com.karandaev.fieldfolio.core.ui.components.dialog.SafeAppDialog
 import com.karandaev.fieldfolio.core.ui.components.map.AdaptiveOsmMap
@@ -26,8 +27,9 @@ fun LocationPreviewDialog(
   permission: () -> Unit = {},
   toolbarActions: (@Composable RowScope.() -> Unit)? = null,
 ) {
+  val live = rememberDeviceFix(active = node.deviceLocation, includeInPull = false)
   val point =
-    if (node.deviceLocation) device
+    if (node.deviceLocation) live.point ?: device
     else node.latitude?.let { lat -> node.longitude?.let { MapPoint(lat, it) } }
   SafeAppDialog(dismiss) {
     Surface(Modifier.fillMaxSize()) {

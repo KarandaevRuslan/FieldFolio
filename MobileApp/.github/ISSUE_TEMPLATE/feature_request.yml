@@ -1,9 +1,0 @@
-name: Feature request
-description: Describe a use case or improvement.
-body:
-  - type: textarea
-    id: usecase
-    attributes:
-      label: Use case and proposed behavior
-    validations:
-      required: true

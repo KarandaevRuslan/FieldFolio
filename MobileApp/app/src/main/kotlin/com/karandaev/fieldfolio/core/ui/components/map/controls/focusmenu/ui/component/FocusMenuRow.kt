@@ -11,12 +11,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.model.OsmFocusMenuItem
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.ui.formatter.focusMenuDistanceText
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.ui.formatter.focusMenuLabel
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.ui.formatter.focusMenuPositionText
@@ -52,6 +62,31 @@ internal fun FocusMenuRow(item: OsmFocusMenuItem, onClick: () -> Unit) {
         text = item.focusMenuLabel(context),
         style = MaterialTheme.typography.labelSmall,
         color = colors.label,
+      )
+    }
+
+    item.measuredAtMillis?.let { measuredAt ->
+      // The row can remain composed while GPS is unavailable. A one-time clock read would
+      // freeze "Last fix: N min" until some unrelated UI event forces a recomposition.
+      // This lightweight ticker lives only as long as this focus-menu row is visible.
+      var now by remember(measuredAt, item.stale) { mutableLongStateOf(System.currentTimeMillis()) }
+      val lifecycle = LocalLifecycleOwner.current.lifecycle
+      LaunchedEffect(measuredAt, item.stale, lifecycle) {
+        lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+          while (isActive) {
+            now = System.currentTimeMillis()
+            delay(nextFixAgeTickDelayMillis(measuredAt, now, item.stale))
+          }
+        }
+      }
+      val ageSeconds = fixAgeSeconds(measuredAt, now)
+      Text(
+        text = if (item.stale) context.getString(com.karandaev.fieldfolio.R.string.map_last_fix,
+          ageSeconds / 60L)
+          else context.getString(com.karandaev.fieldfolio.R.string.map_fix_age,
+            ageSeconds),
+        style = MaterialTheme.typography.labelSmall,
+        color = if (item.stale) MaterialTheme.colorScheme.error else colors.secondary,
       )
     }
 

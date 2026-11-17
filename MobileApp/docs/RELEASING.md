@@ -1,12 +1,12 @@
 # GitHub Actions and APK releases
 
-The workflows are source files ready to commit to a repository owned by
+The workflows are stored in the **monorepo root** `.github/workflows/` and are ready to commit to a repository owned by
 [KarandaevRuslan](https://github.com/KarandaevRuslan/). Preparing them does not create a repository,
 push commits/tags, configure secrets or run GitHub Actions remotely.
 
 ## CI
 
-`ci.yml` runs on main pushes, pull requests, manual requests and reusable calls. It checks source
+`../.github/workflows/mobile-ci.yml` runs on MobileApp changes to main, relevant pull requests, manual requests and reusable calls. It checks source
 boundaries/hygiene, repository tests, the real web runtime, frontend rebuilds, isolated Android
 regressions, lint, debug/instrumentation APK compilation, Room schema drift and Notebook Kit/Nexus
 integration. It uploads check reports and a debug APK. PR verification does not require secrets.
@@ -19,7 +19,7 @@ Actions are pinned to commit IDs and Dependabot can propose reviewed updates.
 3. Regenerate web assets, verify the source and commit the complete change.
 4. Push a matching tag, for example `v2.2.0` for source version `2.2.0`.
 
-`release.yml` calls CI, rejects a mismatching/invalid tag, and uploads an Actions artifact named
+`../.github/workflows/mobile-release.yml` calls CI, rejects a mismatching/invalid tag, and uploads an Actions artifact named
 `Fieldfolio-v2.2.0-debug` containing the debug-signed APK and `SHA256SUMS`. Download it from the
 workflow run. This is an installable test artifact; debug signatures are not production signing
 identities and are not guaranteed to remain stable between hosted-runner builds. No public
@@ -47,3 +47,7 @@ Use the same signing identity for app upgrades. App ID `com.karandaev.fieldfolio
 9, logical-name/archive contracts and Firebase project ownership must remain compatible.
 
 GitHub event/filter reference: https://docs.github.com/en/actions/how-tos/write-workflows/choose-when-workflows-run/trigger-a-workflow
+
+From `Team Project/`, the Android Gradle project is `MobileApp/`; do not run Gradle
+from the Git root. Android version tags retain the `v*` namespace; use a separate prefix
+for server tags.

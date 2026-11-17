@@ -127,4 +127,15 @@
     <string name="confirmation_word_field_label">Подтверждение</string>
     <string name="reset_confirmation_word_field_prompt">Введите %1$s для подтверждения сброса.</string>
   <string name="v22_to_top">Наверх страницы</string>
+    <string name="settings_map_show_center">Показывать центр карты</string>
+    <string name="settings_map_show_center_description">Показывать текущий центр карты в списке «Куда перейти».</string>
+    <string name="map_last_fix">Последняя позиция: %1$d мин назад</string>
+    <string name="map_fix_age">Позиция определена %1$d сек назад</string>
+    <string name="map_my_current_location">Моё текущее местоположение</string>
+    <string name="map_my_last_location">Моё последнее местоположение</string>
+    <string name="map_grant_location_for_map">Разрешить геолокацию для карты</string>
+    <string name="map_locating_device">Определяем местоположение…</string>
+    <string name="map_retry_device_location">Обновить моё местоположение</string>
+    <string name="weather_previous_after_error">Не удалось обновить погоду — показаны прошлые данные</string>
+    <string name="weather_previous_stale">Данные о погоде могли устареть</string>
 </resources>

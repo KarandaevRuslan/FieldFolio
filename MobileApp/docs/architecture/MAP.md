@@ -1,6 +1,6 @@
 # Architecture map
 
-Paths below are relative to the repository root. Android package paths are relative to
+Paths below are relative to the MobileApp project root unless they begin with `../` (monorepo parent). Android package paths are relative to
 `app/src/main/kotlin/com/karandaev/fieldfolio/`. Tests mirror the production packages under
 `app/src/test/kotlin/`; device-only checks are under `app/src/androidTest/kotlin/`.
 
@@ -81,8 +81,8 @@ but cannot import editor entry points, privileged host modules or `NativeEditor`
 | `scripts/testing/` | Verified Robolectric SDK bootstrap and opt-in test-only network guard |
 | `scripts/release/` | Version/tag matching and scoped release credential preparation |
 | `tests/` | Python architecture mutation tests and release/distribution contracts |
-| `.github/workflows/ci.yml` | Source/web checks, Android tests, lint and debug APK |
-| `.github/workflows/release.yml` | Verified tag APK artifact; optional manually requested signed draft release |
+| `../.github/workflows/mobile-ci.yml` | Monorepo-root workflow: source/web checks, Android tests, lint and debug APK |
+| `../.github/workflows/mobile-release.yml` | Monorepo-root workflow: tagged APK and optional manually requested signed draft |
 | `app/schemas/` | Room schema snapshots, currently version 9 |
 
 For tradeoffs see [Decisions](DECISIONS.md); for measured checks see [Validation](../VALIDATION.md).

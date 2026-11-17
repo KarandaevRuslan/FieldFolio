@@ -9,6 +9,7 @@ import com.karandaev.fieldfolio.core.ui.text.tr
 internal fun SettingsDocumentSection() {
   SettingsTextSection()
   SettingsAudioSection()
+  SettingsMapSection()
 }
 
 @Composable

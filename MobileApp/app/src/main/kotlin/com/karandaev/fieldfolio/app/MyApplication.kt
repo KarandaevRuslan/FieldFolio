@@ -120,6 +120,18 @@ class MyApplication : Application(), com.karandaev.fieldfolio.core.di.AppService
   /** WeatherProvider for loading weather in a specific place. */
   override val weatherProvider: WeatherProvider by lazy { OpenMeteoWeatherProvider() }
 
+  override val resourceCoordinator: com.karandaev.fieldfolio.core.datarefresh.ResourceCoordinator by lazy {
+    com.karandaev.fieldfolio.core.datarefresh.ResourceCoordinator(
+      deviceLocationProvider,
+      weatherProvider,
+      persistedAppStateRepository,
+      hasPermission = {
+        com.karandaev.fieldfolio.core.location.permissionchecker.LocationPermissionChecker
+          .hasLocationPermission(this)
+      },
+    )
+  }
+
   override fun onCreate() {
     super.onCreate()
     clearStartupImageCache()

@@ -1,0 +1,17 @@
+# Server-specific local runtime state; shared rules also live at ../.gitignore.
+/target/
+/.idea/
+/python-yolo/.venv/
+/python-yolo/venv/
+/python-yolo/runs/
+/data/
+/uploads/
+/avatars/
+/src/main/resources/application.yml
+/src/main/resources/firebase-service-account.json
+/src/main/resources/keystore.p12
+/ssl/*.key
+/ssl/*.pem
+/ssl/*.p12
+/ssl/*.crt
+/clamav/

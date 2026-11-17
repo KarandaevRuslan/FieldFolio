@@ -1,0 +1,21 @@
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.ps1 text eol=crlf
+*.jar binary
+*.zip binary
+*.tgz binary
+*.tflite binary
+*.pt binary
+*.pth binary
+*.npy binary
+*.npz binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.woff2 binary
+*.ttf binary
+MobileApp/third_party/** -whitespace
+MobileApp/acode-web/third_party/** -whitespace
+MobileApp/acode-web/src/acode/vendor/** -whitespace

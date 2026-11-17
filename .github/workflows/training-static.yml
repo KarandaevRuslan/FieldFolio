@@ -1,0 +1,41 @@
+name: Training source syntax
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'DetectionTrainProj/**'
+      - '.github/workflows/training-static.yml'
+  pull_request:
+    paths:
+      - 'DetectionTrainProj/**'
+      - '.github/workflows/training-static.yml'
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  python-syntax:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
+        with:
+          persist-credentials: false
+      - name: Parse checked-in Python sources without installing GPU dependencies
+        run: |
+          python3 - <<'PYCODE'
+          import ast
+          import subprocess
+          import tokenize
+          from pathlib import Path
+
+          paths = subprocess.check_output(['git', 'ls-files', '-z', '--', 'DetectionTrainProj'], text=False).split(b'\0')
+          count = 0
+          for raw in paths:
+              if not raw or not raw.endswith(b'.py'):
+                  continue
+              path = Path(raw.decode())
+              with tokenize.open(path) as stream:
+                  ast.parse(stream.read(), filename=str(path))
+              count += 1
+          print(f'Parsed {count} tracked Python training files (no model inference run).')
+          PYCODE

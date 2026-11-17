@@ -133,3 +133,64 @@ google-services.json
 qr-code.png
 
 old/
+
+*.patch
+
+# Workspace artifacts and downloaded source bundles; preserve deliberately tracked fixtures.
+*.zip
+*.7z
+*.rar
+*.tar
+*.tar.gz
+*.tgz
+!MobileApp/acode-web/vendor/*.tgz
+!MobileApp/acode-web/third_party/acode/patches/*.patch
+!**/src/test/resources/**/*.zip
+!**/tests/fixtures/**/*.zip
+*.bak
+*.orig
+*.rej
+*.swp
+*.swo
+*~
+
+# Cross-project generated state.
+**/node_modules/
+**/.kotlin/
+**/.test-cache/
+**/.pytest_cache/
+**/.ruff_cache/
+**/coverage/
+*.hprof
+*.db-journal
+*.db-wal
+*.db-shm
+*.log
+
+# Machine-specific settings, secrets and TLS material. Never commit real credentials.
+.env
+.env.*
+!.env.example
+*.p12
+*.pfx
+*.key
+*.crt
+Server/ssl/*.cer
+Server/ssl/*.p7b
+Server/src/main/resources/*service-account*.json
+MobileApp/app/google-services.json
+MobileApp/keystore.properties
+
+# Runtime data and generated Python/YOLO artifacts (not source code).
+Server/data/
+Server/uploads/
+Server/avatars/
+Server/python-yolo/.venv/
+Server/python-yolo/runs/
+Server/python-yolo/__pycache__/
+DetectionTrainProj/**/*.npy
+DetectionTrainProj/**/*.npz
+DetectionTrainProj/**/*.onnx
+DetectionTrainProj/**/*.pth
+DetectionTrainProj/**/*.ckpt
+DetectionTrainProj/**/*.safetensors

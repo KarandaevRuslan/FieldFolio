@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.karandaev.fieldfolio.core.location.place.PlaceNameProvider
+import com.karandaev.fieldfolio.core.di.rememberAppServices
 import com.karandaev.fieldfolio.core.location.resolver.LocationResolver
 import com.karandaev.fieldfolio.core.ui.lifecycle.findActivity
 import com.karandaev.fieldfolio.core.util.formatters.formatCoordinate
@@ -36,6 +37,7 @@ fun rememberLocationController(
   requestPermissionOnStart: Boolean = false,
 ): LocationController {
   val context = LocalContext.current
+  val coordinator = rememberAppServices().resourceCoordinator
   val activity = remember(context) { context.findActivity() }
 
   val locationViewModel: LocationViewModel =
@@ -86,6 +88,7 @@ fun rememberLocationController(
     requestKey = permissionRequestKey,
     onPermissionResult = {
       permissionViewModel.checkPermission(context = context, activity = activity)
+      coordinator.permissionChanged()
     },
   )
 

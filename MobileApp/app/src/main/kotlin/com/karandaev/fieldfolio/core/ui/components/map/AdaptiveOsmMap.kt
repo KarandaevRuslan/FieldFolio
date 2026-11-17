@@ -27,6 +27,11 @@ import com.karandaev.fieldfolio.core.ui.components.actions.HintFilledTonalIconBu
 import com.karandaev.fieldfolio.core.ui.components.map.camera.OsmMapCameraConfig
 import com.karandaev.fieldfolio.core.ui.components.map.camera.focusOn
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.model.buildOsmFocusMenuItems
+import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.model.mergeMarkersWithTrackedPoints
+import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.model.resolveLinkedFocusTarget
+import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.model.OsmTrackedFocusPoint
+import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.source.DeviceFocusPointFeed
+import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.source.OsmFocusPointFeed
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.ui.MapFocusMenuOverlay
 import com.karandaev.fieldfolio.core.ui.components.map.controls.model.OsmMapControls
 import com.karandaev.fieldfolio.core.ui.components.map.controls.model.OsmMapInteractions
@@ -36,6 +41,7 @@ import com.karandaev.fieldfolio.core.ui.components.map.controls.ui.MapZoomContro
 import com.karandaev.fieldfolio.core.ui.components.map.events.rememberOsmMapView
 import com.karandaev.fieldfolio.core.ui.components.map.lifecycle.MapLifecycleEffect
 import com.karandaev.fieldfolio.core.ui.components.map.marker.model.OsmMarkerSpec
+import com.karandaev.fieldfolio.core.ui.components.map.settings.MapFocusPreferences
 import com.karandaev.fieldfolio.core.ui.components.map.marker.style.markerPalette
 import com.karandaev.fieldfolio.core.ui.components.map.state.rememberAdaptiveOsmMapState
 import com.karandaev.fieldfolio.core.ui.components.map.state.updateAdaptiveOsmMap
@@ -94,17 +100,33 @@ fun AdaptiveOsmMap(
   controls: OsmMapControls = OsmMapControls(),
   interactions: OsmMapInteractions = OsmMapInteractions(),
   focusTarget: MapPoint? = null,
+  focusTargetMarkerId: String? = null,
   focusRequest: Int = 0,
   centerOnMarkerChange: Boolean = false,
   isLoading: Boolean = false,
+  focusPointFeeds: List<OsmFocusPointFeed> = listOf(DeviceFocusPointFeed),
+  extraFocusPoints: List<OsmTrackedFocusPoint> = emptyList(),
   mapRef: (MapView) -> Unit = {},
 ) {
   val context = LocalContext.current
+  val showCurrentMapCenter by MapFocusPreferences.rememberShowCurrentMapCenter()
 
   val currentOnTap = rememberUpdatedState(interactions.onTap)
   val currentOnLongPress = rememberUpdatedState(interactions.onLongPress)
   val currentOnMarkerClick = rememberUpdatedState(interactions.onMarkerClick)
   val currentMapRef = rememberUpdatedState(mapRef)
+
+  // Keep feed subscriptions for the lifetime of the visible map, not only while the menu
+  // is open. This makes the device pin visible and lets a late GPS fix update the map.
+  // The application coordinator still performs only ONE GPS polling loop for all maps.
+  val feedStates = focusPointFeeds.map { it.snapshot(active = true) }
+  val trackedPoints = extraFocusPoints + feedStates.flatMap { it.points }
+  val visibleMarkers = mergeMarkersWithTrackedPoints(markers, trackedPoints)
+  val feedActions = feedStates.mapNotNull { it.action }
+  // A linked marker may have moved since the caller's last snapshot. Keep the focus
+  // button and focus requests aligned with the single destination shown in the menu.
+  val effectiveFocusTarget =
+    resolveLinkedFocusTarget(focusTarget, focusTargetMarkerId, visibleMarkers)
 
   val palette = markerPalette()
   val mapState = rememberAdaptiveOsmMapState(focusRequest = focusRequest)
@@ -208,10 +230,10 @@ fun AdaptiveOsmMap(
           currentMapRef.value(view)
 
           view.updateAdaptiveOsmMap(
-            markers = markers,
+            markers = visibleMarkers,
             palette = palette,
             camera = camera,
-            focusTarget = focusTarget,
+            focusTarget = effectiveFocusTarget,
             focusRequest = focusRequest,
             centerOnMarkerChange = centerOnMarkerChange,
             currentOnMarkerClick = currentOnMarkerClick,
@@ -233,7 +255,7 @@ fun AdaptiveOsmMap(
         )
       }
 
-      val focusButtonTarget = focusTarget ?: camera.initialCenter
+      val focusButtonTarget = effectiveFocusTarget ?: camera.initialCenter
 
       if (controls.showFocusButton) {
         MapFocusButton(
@@ -278,15 +300,19 @@ fun AdaptiveOsmMap(
                   androidx.compose.ui.res.stringResource(
                     com.karandaev.fieldfolio.R.string.map_current_center
                   ),
-                focusTarget = focusTarget,
+                focusTarget = effectiveFocusTarget,
+                focusTargetMarkerId = focusTargetMarkerId,
                 initialCenter =
                   com.karandaev.fieldfolio.core.domain.model.location.MapPoint(
                     mapView.mapCenter.latitude,
                     mapView.mapCenter.longitude,
                   ),
-                markers = markers,
+                markers = visibleMarkers,
+                trackedPoints = trackedPoints,
+                showCurrentMapCenter = showCurrentMapCenter,
               ),
             showSearch = true,
+            actions = feedActions,
             onItemClick = { item ->
               isFocusMenuVisible = false
 

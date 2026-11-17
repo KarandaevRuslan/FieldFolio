@@ -89,7 +89,11 @@ fun DocumentMapRoute(
       )
     } +
       listOfNotNull(
-        device?.let { OsmMarkerSpec("device", it, OsmMarkerKind.Current, tr("device_location")) }
+        // Same identity as DeviceFocusPointFeed. When GPS is late, this marker keeps the
+        // saved fallback visible; when GPS arrives, the feed replaces it, not duplicates it.
+        device?.let { OsmMarkerSpec("current-location", it, OsmMarkerKind.Current, if (controller.isStale)
+          androidx.compose.ui.res.stringResource(com.karandaev.fieldfolio.R.string.map_my_last_location)
+        else tr("device_location")) }
       )
   Box(Modifier.fillMaxSize()) {
     AdaptiveOsmMap(
@@ -97,6 +101,7 @@ fun DocumentMapRoute(
       Modifier.fillMaxSize(),
       mapRef = { nativeMap = it },
       focusTarget = device,
+      focusTargetMarkerId = "current-location",
       focusRequest = controller.focusRequest,
       controls = OsmMapControls(onFocusClick = controller::focusLocation),
       interactions =

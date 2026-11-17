@@ -40,6 +40,7 @@ interface AppServices {
   val deviceLocationProvider: DeviceLocationProvider
   val locationResolver: LocationResolver
   val weatherProvider: WeatherProvider
+  val resourceCoordinator: com.karandaev.fieldfolio.core.datarefresh.ResourceCoordinator
 }
 
 /**

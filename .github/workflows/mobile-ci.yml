@@ -1,59 +1,63 @@
-name: Verify source, web and Android
+name: MobileApp CI
 on:
   push:
     branches: [main]
+    paths:
+      - 'MobileApp/**'
+      - '.github/workflows/mobile-ci.yml'
   pull_request:
+    paths:
+      - 'MobileApp/**'
+      - '.github/workflows/mobile-ci.yml'
   workflow_dispatch:
   workflow_call:
 permissions:
   contents: read
 concurrency:
-  group: verify-${{ github.workflow }}-${{ github.ref }}
+  group: mobile-ci-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 jobs:
-  verify:
+  android-web:
     runs-on: ubuntu-24.04
-    timeout-minutes: 50
+    timeout-minutes: 60
+    defaults:
+      run:
+        working-directory: MobileApp
     steps:
       - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803
         with:
           persist-credentials: false
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
         with:
-          node-version-file: .node-version
+          node-version-file: MobileApp/.node-version
           cache: npm
-          cache-dependency-path: acode-web/package-lock.json
+          cache-dependency-path: MobileApp/acode-web/package-lock.json
       - uses: actions/setup-java@77dd5b2ce225ea11469928ac317850245a74ae78
         with:
           distribution: temurin
-          java-version-file: .java-version
+          java-version-file: MobileApp/.java-version
       - uses: android-actions/setup-android@be39fa834029ff78f1a44aa3bb0819b8fc2bd8fd
       - run: sdkmanager 'platforms;android-36' 'build-tools;35.0.0'
       - uses: gradle/actions/setup-gradle@ed408507eac070d1f99cc633dbcf757c94c7933a
-      - name: Check architecture, source hygiene and release contracts
+      - name: Source architecture and repository checks
         run: |
           python3 scripts/architecture/check.py
           python3 scripts/check_repository.py
           python3 -m unittest discover -s tests -v
           python3 scripts/format_kotlin.py --check
-      - name: Validate tag
-        if: github.ref_type == 'tag'
-        env:
-          RELEASE_TAG: ${{ github.ref_name }}
-        run: python3 scripts/release/check_tag.py "$RELEASE_TAG"
-      - run: npm ci --no-audit --no-fund
-        working-directory: acode-web
-      - run: npm test && npm run build
-        working-directory: acode-web
-      - run: python3 scripts/check_web_assets.py
-      - name: Prepare isolated Android tests
+      - name: Install and test web workspace
+        run: npm ci --no-audit --no-fund && npm test && npm run build
+        working-directory: MobileApp/acode-web
+      - name: Check built-in WebView asset manifest
+        run: python3 scripts/check_web_assets.py
+      - name: Prepare isolated Android test SDKs
         run: python3 scripts/testing/prepare_sdks.py
-      - name: Android regression tests, lint and APK
+      - name: Android tests, lint, and debug APKs
         run: bash gradlew :app:testDebugUnitTest :app:lintDebug :app:assembleDebug :app:assembleDebugAndroidTest -PofflineTestNetwork=true --no-daemon --max-workers=2
-      - name: Real Notebook Kit and Nexus integration
+      - name: Notebook Kit/Nexus integration tests
         run: npm run test:document-runtime
-        working-directory: acode-web
-      - name: Verify committed Room schema
+        working-directory: MobileApp/acode-web
+      - name: Verify Room schema snapshots
         run: git diff --exit-code -- app/schemas
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         if: always()
@@ -61,11 +65,11 @@ jobs:
           name: fieldfolio-checks
           retention-days: 14
           path: |
-            app/build/test-results/**/*.xml
-            app/build/reports/lint-results-debug.*
+            MobileApp/app/build/test-results/**/*.xml
+            MobileApp/app/build/reports/lint-results-debug.*
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: fieldfolio-debug
           if-no-files-found: error
           retention-days: 14
-          path: app/build/outputs/apk/debug/*.apk
+          path: MobileApp/app/build/outputs/apk/debug/*.apk

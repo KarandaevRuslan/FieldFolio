@@ -67,6 +67,7 @@ fun OsmMapView(
         onMarkerClick = { markerId -> markerId.toNoteIdOrNull()?.let(onNoteMarkerClick) },
       ),
     focusTarget = currentLocationPoint,
+    focusTargetMarkerId = CURRENT_LOCATION_MARKER_ID,
     focusRequest = focusRequest,
     isLoading = locationState.isInitialLocationLoading,
     mapRef = mapRef,

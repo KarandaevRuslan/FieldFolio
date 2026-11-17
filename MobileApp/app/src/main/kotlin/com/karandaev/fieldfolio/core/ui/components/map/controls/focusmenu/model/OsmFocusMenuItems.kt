@@ -5,18 +5,9 @@ import com.karandaev.fieldfolio.core.ui.components.map.marker.model.OsmMarkerKin
 import com.karandaev.fieldfolio.core.ui.components.map.marker.model.OsmMarkerSpec
 
 /**
- * Builds focus menu items in the order expected by the map UI.
- *
- * The distance origin is the first current marker when available, otherwise the focus target when
- * available, otherwise the initial center.
- *
- * The final order is:
- * 1. Focus target.
- * 2. Current markers.
- * 3. Initial center.
- * 4. Other markers sorted by distance from the distance origin.
- *
- * Items with the same coordinates are shown only once.
+ * Builds focus destinations ordered by proximity to the selected origin.
+ * The origin and all points at that position come first; other destinations follow by distance.
+ * Individual participants keep separate identities even when their coordinates coincide.
  */
 fun buildOsmFocusMenuItems(
   focusTarget: MapPoint?,
@@ -24,14 +15,31 @@ fun buildOsmFocusMenuItems(
   focusTargetTitle: String,
   initialCenterTitle: String,
   markers: List<OsmMarkerSpec>,
+  trackedPoints: List<OsmTrackedFocusPoint> = emptyList(),
+  explicitDistanceOrigin: MapPoint? = null,
+  focusTargetMarkerId: String? = null,
+  showCurrentMapCenter: Boolean = true,
 ): List<OsmFocusMenuItem> {
-  val distanceOrigin = markers.firstCurrentPoint() ?: focusTarget ?: initialCenter
+  val distanceOrigin = explicitDistanceOrigin ?: focusTarget ?: initialCenter
 
   val distanceOriginKey = distanceOrigin.toMapPointKey()
-  val usedPoints = mutableSetOf<MapPointKey>()
+  val usedIds = mutableSetOf<String>()
+  // The focus target is not a new entity. If its destination is already listed, an
+  // extra row would only repeat the same navigation action. Different participants
+  // at that position still retain their own rows, keyed by identity.
+  val targetKey = focusTarget?.toMapPointKey()
+  val representedFocusTarget = targetKey != null && (
+    markers.any { marker ->
+      marker.point.toMapPointKey() == targetKey ||
+        (focusTargetMarkerId != null && marker.id == focusTargetMarkerId)
+    } || trackedPoints.any { tracked ->
+      tracked.point.toMapPointKey() == targetKey ||
+        (focusTargetMarkerId != null && tracked.linkedMarkerId == focusTargetMarkerId)
+    }
+  )
 
-  return buildList {
-    focusTarget?.let { point ->
+  val unsorted = buildList {
+    focusTarget?.takeUnless { representedFocusTarget }?.let { point ->
       addIfNotDuplicate(
         item =
           point.toFocusMenuItem(
@@ -41,11 +49,31 @@ fun buildOsmFocusMenuItems(
             distanceOrigin = distanceOrigin,
             distanceOriginKey = distanceOriginKey,
           ),
-        usedPoints = usedPoints,
+        usedIds = usedIds,
       )
     }
 
-    markers.currentMarkersSortedByDistanceFrom(distanceOrigin).forEach { marker ->
+    trackedPoints.forEach { tracked ->
+      addIfNotDuplicate(
+        item = tracked.point.toFocusMenuItem(
+          id = "tracked-${tracked.id}",
+          title = tracked.title,
+          kind = OsmFocusMenuItemKind.Tracked,
+          distanceOrigin = distanceOrigin,
+          distanceOriginKey = distanceOriginKey,
+        ).copy(
+          measuredAtMillis = tracked.measuredAtMillis,
+          accuracyMeters = tracked.accuracyMeters,
+          stale = tracked.stale,
+        ),
+        usedIds = usedIds,
+      )
+    }
+
+    val representedMarkers = trackedPoints.map { it.linkedMarkerId ?: "tracked-${it.id}" }.toSet()
+    markers.asSequence()
+      .filter { it.kind == OsmMarkerKind.Current && it.id !in representedMarkers }
+      .forEach { marker ->
       addIfNotDuplicate(
         item =
           marker.toFocusMenuItem(
@@ -54,23 +82,25 @@ fun buildOsmFocusMenuItems(
             distanceOrigin = distanceOrigin,
             distanceOriginKey = distanceOriginKey,
           ),
-        usedPoints = usedPoints,
+        usedIds = usedIds,
       )
     }
 
-    addIfNotDuplicate(
-      item =
-        initialCenter.toFocusMenuItem(
-          id = "initial-center",
-          title = initialCenterTitle,
-          kind = OsmFocusMenuItemKind.InitialCenter,
-          distanceOrigin = distanceOrigin,
-          distanceOriginKey = distanceOriginKey,
-        ),
-      usedPoints = usedPoints,
-    )
+    if (showCurrentMapCenter) {
+      addIfNotDuplicate(
+        item =
+          initialCenter.toFocusMenuItem(
+            id = "initial-center",
+            title = initialCenterTitle,
+            kind = OsmFocusMenuItemKind.InitialCenter,
+            distanceOrigin = distanceOrigin,
+            distanceOriginKey = distanceOriginKey,
+          ),
+        usedIds = usedIds,
+      )
+    }
 
-    markers.nonCurrentMarkersSortedByDistanceFrom(distanceOrigin).forEach { marker ->
+    markers.asSequence().filter { it.kind != OsmMarkerKind.Current }.forEach { marker ->
       addIfNotDuplicate(
         item =
           marker.toFocusMenuItem(
@@ -79,33 +109,16 @@ fun buildOsmFocusMenuItems(
             distanceOrigin = distanceOrigin,
             distanceOriginKey = distanceOriginKey,
           ),
-        usedPoints = usedPoints,
+        usedIds = usedIds,
       )
     }
   }
-}
-
-/** Returns the first current marker point if it exists. */
-private fun List<OsmMarkerSpec>.firstCurrentPoint(): MapPoint? {
-  return firstOrNull { marker -> marker.kind == OsmMarkerKind.Current }?.point
-}
-
-/** Returns current markers sorted by spherical distance from the origin. */
-private fun List<OsmMarkerSpec>.currentMarkersSortedByDistanceFrom(
-  origin: MapPoint
-): Sequence<OsmMarkerSpec> {
-  return asSequence()
-    .filter { marker -> marker.kind == OsmMarkerKind.Current }
-    .sortedBy { marker -> marker.point.sphericalDistanceTo(origin) }
-}
-
-/** Returns non-current markers sorted by spherical distance from the origin. */
-private fun List<OsmMarkerSpec>.nonCurrentMarkersSortedByDistanceFrom(
-  origin: MapPoint
-): Sequence<OsmMarkerSpec> {
-  return asSequence()
-    .filterNot { marker -> marker.kind == OsmMarkerKind.Current }
-    .sortedBy { marker -> marker.point.sphericalDistanceTo(origin) }
+  // Stable sorting: origin (including all collocated identities) first, then nearest
+  // destinations. A "Current" marker never outranks a closer selected marker.
+  return unsorted.sortedWith(
+    compareByDescending<OsmFocusMenuItem> { it.isOrigin }
+      .thenBy { it.distanceFromOriginMeters }
+  )
 }
 
 /** Converts a marker to a focus menu item. */
@@ -142,12 +155,10 @@ private fun MapPoint.toFocusMenuItem(
   )
 }
 
-/** Adds an item only when its coordinates were not added before. */
+/** Only the SAME resource identity is a duplicate. Different people may stand together. */
 private fun MutableList<OsmFocusMenuItem>.addIfNotDuplicate(
   item: OsmFocusMenuItem,
-  usedPoints: MutableSet<MapPointKey>,
+  usedIds: MutableSet<String>,
 ) {
-  if (usedPoints.add(item.point.toMapPointKey())) {
-    add(item)
-  }
+  if (usedIds.add(item.id)) add(item)
 }

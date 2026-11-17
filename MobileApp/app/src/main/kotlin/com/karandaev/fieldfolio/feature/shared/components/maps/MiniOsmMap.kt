@@ -87,6 +87,12 @@ fun MiniOsmMap(
       ),
     interactions = OsmMapInteractions(onTap = onSelectedPointChange),
     focusTarget = focusTarget,
+    focusTargetMarkerId = when {
+      preferSelectedPointFocus && selectedPoint != null -> SELECTED_LOCATION_MARKER_ID
+      currentLocationPoint != null -> CURRENT_LOCATION_MARKER_ID
+      selectedPoint != null -> SELECTED_LOCATION_MARKER_ID
+      else -> null
+    },
     focusRequest = focusRequest,
     centerOnMarkerChange = centerOnMarkerChange,
     isLoading = locationState.isInitialLocationLoading,

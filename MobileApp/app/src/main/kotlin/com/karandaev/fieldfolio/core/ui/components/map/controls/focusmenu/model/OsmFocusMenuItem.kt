@@ -21,6 +21,9 @@ data class OsmFocusMenuItem(
   val kind: OsmFocusMenuItemKind,
   val distanceFromOriginMeters: Double,
   val isOrigin: Boolean,
+  val measuredAtMillis: Long? = null,
+  val accuracyMeters: Float? = null,
+  val stale: Boolean = false,
 )
 
 /** Describes the semantic source of a focus menu item. */
@@ -28,6 +31,7 @@ data class OsmFocusMenuItem(
 enum class OsmFocusMenuItemKind {
   FocusTarget,
   Current,
+  Tracked,
   InitialCenter,
   Marker,
 }

@@ -26,6 +26,8 @@ import androidx.lifecycle.*
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.*
 import com.karandaev.fieldfolio.core.di.rememberAppServices
+import com.karandaev.fieldfolio.core.datarefresh.LocalRefreshScope
+import com.karandaev.fieldfolio.core.datarefresh.rememberRefreshScope
 import com.karandaev.fieldfolio.core.document.*
 import com.karandaev.fieldfolio.core.domain.model.location.MapPoint
 import com.karandaev.fieldfolio.core.models.*
@@ -159,10 +161,9 @@ fun DocumentRoute(
     }
   }
 
-  var permissionRefresh by rememberSession { mutableIntStateOf(0) }
   val permission =
     rememberLauncherForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) {
-      permissionRefresh++
+      app.resourceCoordinator.permissionChanged()
     }
   val requestPermission = {
     permission.launch(
@@ -172,19 +173,11 @@ fun DocumentRoute(
       )
     )
   }
-  val needsDevice =
-    vm.document.nodes.any {
-      it.deviceLocation && it.kind in setOf(BlockKind.LOCATION, BlockKind.WEATHER)
-    }
-  val device by
-    produceState<MapPoint?>(null, needsDevice, refresh, permissionRefresh) {
-      if (needsDevice)
-        while (isActive) {
-          value =
-            app.deviceLocationProvider.getLocation()?.let { MapPoint(it.latitude, it.longitude) }
-          delay(30_000)
-        }
-    }
+  // VFS reads a snapshot. Only composed widgets subscribe to live device/location updates.
+  val resourceCoordinator = app.resourceCoordinator
+  val deviceFix by resourceCoordinator.location.collectAsStateWithLifecycle()
+  val device = deviceFix.point
+  val refreshScope = rememberRefreshScope()
   val documentWebPool: com.karandaev.fieldfolio.core.document.runtime.DocumentWebPool =
     viewModel(owner, key = "web-$reportId-$parentId")
   val audioOwner: DocumentPlaybackViewModel = viewModel(owner, key = "audio-$reportId-$parentId")
@@ -288,9 +281,11 @@ fun DocumentRoute(
   }
   val pull =
     rememberPullRefreshState(
-      vm.loading,
+      vm.loading || refreshScope.refreshing,
       {
         refresh++
+        // Data needs are declared by the visible UI; VFS get() itself never starts polling.
+        scope.launch { refreshScope.refresh() }
         if (reportId > 0 && (!editing || !vm.dirty)) vm.refresh()
       },
     )
@@ -300,6 +295,7 @@ fun DocumentRoute(
     com.karandaev.fieldfolio.core.document.runtime.LocalDocumentAccess provides documentAccess,
     com.karandaev.fieldfolio.core.document.runtime.LocalDocumentWebPool provides documentWebPool,
     com.karandaev.fieldfolio.core.document.runtime.LocalNotebookWindows provides vm.notebookWindows,
+    LocalRefreshScope provides refreshScope,
   ) {
     Scaffold(
       contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -406,7 +402,7 @@ fun DocumentRoute(
               }
             }
         }
-        if (!editing) PullRefreshIndicator(vm.loading, pull, Modifier.align(Alignment.TopCenter))
+        if (!editing) PullRefreshIndicator(vm.loading || refreshScope.refreshing, pull, Modifier.align(Alignment.TopCenter))
       }
     }
     if (addMenu)

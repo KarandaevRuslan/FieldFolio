@@ -86,3 +86,7 @@ inference. Playwright browser tests were not run in this refactor validation.
 The GitHub workflows were validated locally, **not executed on GitHub**. No repository was
 created or pushed, no secrets were configured, and no signed release was built or published.
 Follow [Releasing](RELEASING.md) to connect the source to the maintainer's repository and keys.
+
+> Historical note (monorepo migration): validation recorded here concerns the original
+> Fieldfolio 2.2.0 source/workflows. Current GitHub workflows now live at the parent
+> `.github/workflows/`. Their execution on GitHub is **not** covered by this document.

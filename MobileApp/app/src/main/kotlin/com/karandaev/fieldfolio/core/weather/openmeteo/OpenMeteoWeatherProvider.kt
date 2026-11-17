@@ -5,6 +5,8 @@ import com.karandaev.fieldfolio.core.weather.WeatherProvider
 import com.karandaev.fieldfolio.core.weather.openmeteo.remote.OpenMeteoApi
 import com.karandaev.fieldfolio.core.weather.openmeteo.remote.OpenMeteoApiFactory
 import com.karandaev.fieldfolio.core.weather.toWeatherError
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.sync.withPermit
 
 private const val DefaultCacheTtlMillis = 20L * 60L * 1000L
 private const val MaxCacheSize = 50
@@ -30,27 +32,33 @@ class OpenMeteoWeatherProvider(
    *
    * Cached data is returned when available and not expired.
    */
-  override suspend fun refreshWeather(latitude: Double, longitude: Double): Result<WeatherInfo> {
-    cache.remove(WeatherCacheKey.from(latitude, longitude))
-    return getWeather(latitude, longitude)
-  }
+  // The lock is per rounded coordinate: duplicate widgets and Clock's zone lookup share a fetch.
+  private val requestLocks = java.util.concurrent.ConcurrentHashMap<WeatherCacheKey,
+    kotlinx.coroutines.sync.Mutex>()
+  private val networkSlots = kotlinx.coroutines.sync.Semaphore(3)
 
-  override suspend fun getWeather(latitude: Double, longitude: Double): Result<WeatherInfo> {
-    return runCatching {
-        val cacheKey = WeatherCacheKey.from(latitude = latitude, longitude = longitude)
+  override suspend fun refreshWeather(latitude: Double, longitude: Double): Result<WeatherInfo> =
+    fetch(latitude, longitude, force = true)
 
-        cache.get(cacheKey)?.let { cachedWeather ->
-          return@runCatching cachedWeather
+  override suspend fun getWeather(latitude: Double, longitude: Double): Result<WeatherInfo> =
+    fetch(latitude, longitude, force = false)
+
+  private suspend fun fetch(latitude: Double, longitude: Double, force: Boolean): Result<WeatherInfo> {
+    val key = WeatherCacheKey.from(latitude, longitude)
+    val mutex = requestLocks.computeIfAbsent(key) { kotlinx.coroutines.sync.Mutex() }
+    return mutex.withLock {
+      try {
+        if (!force) cache.get(key)?.let { return@withLock Result.success(it) }
+        val result = networkSlots.withPermit {
+          api.getForecast(latitude = latitude, longitude = longitude).toWeatherInfo()
         }
-
-        val response = api.getForecast(latitude = latitude, longitude = longitude)
-
-        val weatherInfo = response.toWeatherInfo()
-
-        cache.put(key = cacheKey, weatherInfo = weatherInfo)
-
-        weatherInfo
+        cache.put(key, result)
+        Result.success(result)
+      } catch (cancelled: kotlinx.coroutines.CancellationException) {
+        throw cancelled
+      } catch (error: Throwable) {
+        Result.failure(error.toWeatherError())
       }
-      .recoverCatching { error -> throw error.toWeatherError() }
+    }
   }
 }

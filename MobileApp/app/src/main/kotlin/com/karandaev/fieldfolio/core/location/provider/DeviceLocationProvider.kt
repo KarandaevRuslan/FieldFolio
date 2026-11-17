@@ -19,6 +19,9 @@ interface DeviceLocationProvider {
    */
   suspend fun getLocation(): AppLocation?
 
+  /** A user-requested refresh must not be satisfied solely from the in-memory cache. */
+  suspend fun getFreshLocation(): AppLocation? = getLocation()
+
   /**
    * Returns the best real device location if available, otherwise returns the app default location.
    */

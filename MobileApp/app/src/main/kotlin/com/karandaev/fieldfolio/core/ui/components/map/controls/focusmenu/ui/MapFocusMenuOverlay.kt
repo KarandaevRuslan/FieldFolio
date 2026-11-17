@@ -23,6 +23,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.model.OsmFocusMenuItem
+import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.source.OsmFocusPointAction
+import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.source.OsmFocusPointActionPlacement
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.ui.component.FocusMenuEmptyState
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.ui.component.FocusMenuHeader
 import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.ui.component.FocusMenuItemList
@@ -41,11 +43,14 @@ import com.karandaev.fieldfolio.core.ui.components.map.controls.focusmenu.ui.fil
 fun MapFocusMenuOverlay(
   items: List<OsmFocusMenuItem>,
   showSearch: Boolean,
+  actions: List<OsmFocusPointAction> = emptyList(),
   onItemClick: (OsmFocusMenuItem) -> Unit,
   onDismiss: () -> Unit,
 ) {
   var searchQuery by rememberSaveable { mutableStateOf("") }
   val effectiveSearchQuery = searchQuery.takeIf { showSearch }.orEmpty()
+  val headerActions = actions.filter { it.placement == OsmFocusPointActionPlacement.Header }
+  val listActions = actions.filter { it.placement == OsmFocusPointActionPlacement.List }
 
   val filteredItems by
     remember(items, effectiveSearchQuery) {
@@ -56,7 +61,7 @@ fun MapFocusMenuOverlay(
     FocusMenuDismissBackground(onDismiss = onDismiss)
 
     FocusMenuCard {
-      FocusMenuHeader()
+      FocusMenuHeader(actions = headerActions)
 
       if (showSearch) {
         FocusMenuSearchField(
@@ -66,10 +71,15 @@ fun MapFocusMenuOverlay(
         )
       }
 
-      if (filteredItems.isEmpty()) {
+      if (filteredItems.isEmpty() && listActions.isEmpty()) {
         FocusMenuEmptyState()
       } else {
-        FocusMenuItemList(items = filteredItems, showSearch = showSearch, onItemClick = onItemClick)
+        FocusMenuItemList(
+          items = filteredItems,
+          actions = listActions,
+          showSearch = showSearch,
+          onItemClick = onItemClick,
+        )
       }
     }
   }

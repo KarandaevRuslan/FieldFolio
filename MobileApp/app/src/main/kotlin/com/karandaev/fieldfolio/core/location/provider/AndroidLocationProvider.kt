@@ -60,6 +60,14 @@ class AndroidLocationProvider(
     return getBestAvailableAndroidLocation()?.toAppLocation()
   }
 
+  override suspend fun getFreshLocation(): AppLocation? {
+    if (!LocationPermissionChecker.hasLocationPermission(applicationContext)) return null
+    // Do not return an old fix just because the user pulled to refresh.
+    val fresh = getCurrentAndroidLocation() ?: return null
+    markFreshLocationRequestSucceeded(SystemClock.elapsedRealtime(), fresh)
+    return fresh.toAppLocation()
+  }
+
   /**
    * Returns the best currently available Android framework location.
    *

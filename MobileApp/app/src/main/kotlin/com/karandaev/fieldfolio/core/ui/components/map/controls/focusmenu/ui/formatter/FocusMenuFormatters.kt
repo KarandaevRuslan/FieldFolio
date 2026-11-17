@@ -14,6 +14,7 @@ internal fun OsmFocusMenuItem.focusMenuLabel(context: Context): String {
       when (kind) {
         OsmFocusMenuItemKind.FocusTarget -> R.string.ui_kind_target
         OsmFocusMenuItemKind.Current -> R.string.ui_kind_current
+        OsmFocusMenuItemKind.Tracked -> R.string.ui_kind_current
         OsmFocusMenuItemKind.InitialCenter -> R.string.ui_kind_center
         OsmFocusMenuItemKind.Marker -> R.string.ui_kind_marker
       }

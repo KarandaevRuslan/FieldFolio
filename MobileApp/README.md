@@ -7,6 +7,10 @@ Observable Notebook Kit and Nexus Core in an isolated WebView renderer.
 
 Maintained by [KarandaevRuslan](https://github.com/KarandaevRuslan/).
 
+This checkout is also maintained under the monorepo `Team Project/MobileApp`.
+Shared GitHub workflows, issue templates and Dependabot now live one directory above, in
+[`../.github/`](../.github/). See the [team repository guide](../docs/README.md).
+
 ## Capabilities
 
 - Organize reports and their ordered elements with folders, logical paths, copy/cut/paste/move,
@@ -64,5 +68,5 @@ the checks and provides a debug-signed APK plus SHA-256 checksum as an Actions a
 optional manual workflow on the tag creates a signed **draft** release using protected environment
 secrets. It does not publish a production release automatically.
 
-The root [MIT license](LICENSE.md) covers Fieldfolio-authored source; preserved third-party
+The Fieldfolio [MIT license](LICENSE.md) covers Fieldfolio-authored source; preserved third-party
 licenses and model provenance are documented separately.

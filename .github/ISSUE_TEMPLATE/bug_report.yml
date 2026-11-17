@@ -1,0 +1,26 @@
+name: Bug report
+description: Report a reproducible issue in the monorepo.
+body:
+  - type: dropdown
+    id: component
+    attributes:
+      label: Affected component
+      options:
+        - MobileApp (Android / WebView)
+        - Server (Spring Boot)
+        - DetectionTrainProj (training)
+        - Repository / CI / documentation
+    validations:
+      required: true
+  - type: textarea
+    id: reproduction
+    attributes:
+      label: Steps to reproduce and expected result
+      description: Provide minimal steps, version, environment, and observed behavior.
+    validations:
+      required: true
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Logs and screenshots (sanitized)
+      description: Never attach tokens, real location history, report contents, model datasets, or credentials.

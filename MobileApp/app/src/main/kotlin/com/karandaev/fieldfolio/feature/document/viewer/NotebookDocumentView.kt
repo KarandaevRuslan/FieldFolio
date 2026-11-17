@@ -20,6 +20,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.karandaev.fieldfolio.R
 import com.karandaev.fieldfolio.acode.web.evaluateJs
 import com.karandaev.fieldfolio.core.document.*
+import com.karandaev.fieldfolio.core.datarefresh.rememberDeviceFix
 import com.karandaev.fieldfolio.core.document.runtime.*
 import com.karandaev.fieldfolio.core.ui.components.actions.HintFilledTonalIconButton
 import com.karandaev.fieldfolio.core.ui.components.actions.HintIconButton
@@ -131,6 +132,16 @@ internal fun DocumentRuntimeView(
   val inherited = LocalDocumentWebPool.current
   val default: DocumentWebPool = viewModel(key = "document-web-pool")
   val pool = inherited ?: default
+  // The read-only VFS may reference a hidden device Location/Weather node. Unlike a plain
+  // text report, an ACTIVE notebook therefore needs an up-to-date location snapshot.
+  // It shares the app-wide GPS request with every visible widget and map; VFS get() itself
+  // still does not trigger a network request or create a permanent subscription.
+  val vfsUsesDevice = remember(access) {
+    access.weather != null && access.document.nodes.any {
+      it.deviceLocation && it.kind in setOf(BlockKind.LOCATION, BlockKind.WEATHER)
+    }
+  }
+  if (vfsUsesDevice) rememberDeviceFix(active = active)
   val context = LocalContext.current
   val lifecycle = LocalLifecycleOwner.current
   val dark = MaterialTheme.colorScheme.background.luminance() < .5f
