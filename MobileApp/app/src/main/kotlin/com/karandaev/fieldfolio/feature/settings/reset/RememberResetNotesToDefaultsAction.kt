@@ -23,6 +23,7 @@ private const val RESET_FAILURE_MESSAGE_PREFIX = "Reset failed"
  * @param resetNotesToDefaults Suspended operation that performs the actual reset.
  * @param onResettingChange Called when reset operation starts or finishes.
  * @param onResetSuccess Called after successful reset.
+ * @param onMessage Optional user-notification sink; defaults to an Android toast.
  * @return Function that starts the report-clearing operation.
  */
 @Composable
@@ -30,6 +31,7 @@ internal fun rememberResetNotesToDefaultsAction(
   resetNotesToDefaults: suspend () -> Unit,
   onResettingChange: (Boolean) -> Unit,
   onResetSuccess: () -> Unit = {},
+  onMessage: ((String) -> Unit)? = null,
 ): () -> Unit {
   val context = LocalContext.current
   val coroutineScope = rememberCoroutineScope()
@@ -37,6 +39,7 @@ internal fun rememberResetNotesToDefaultsAction(
   val currentResetNotesToDefaults by rememberUpdatedState(resetNotesToDefaults)
   val currentOnResettingChange by rememberUpdatedState(onResettingChange)
   val currentOnResetSuccess by rememberUpdatedState(onResetSuccess)
+  val currentOnMessage by rememberUpdatedState(onMessage)
   val inProgress = remember { AtomicBoolean(false) }
 
   return remember {
@@ -46,12 +49,15 @@ internal fun rememberResetNotesToDefaultsAction(
           try {
             currentOnResettingChange(true)
             currentResetNotesToDefaults()
-            context.toast(RESET_SUCCESS_MESSAGE)
+            val notify = currentOnMessage ?: { message: String -> context.toast(message) }
+            notify(RESET_SUCCESS_MESSAGE)
             currentOnResetSuccess()
           } catch (cancelled: CancellationException) {
             throw cancelled
           } catch (error: Exception) {
-            context.toast("$RESET_FAILURE_MESSAGE_PREFIX: ${error.message ?: "unknown error"}")
+            val message = "$RESET_FAILURE_MESSAGE_PREFIX: ${error.message ?: "unknown error"}"
+            val notify = currentOnMessage ?: { text: String -> context.toast(text) }
+            notify(message)
           } finally {
             currentOnResettingChange(false)
             inProgress.set(false)

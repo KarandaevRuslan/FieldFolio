@@ -18,6 +18,8 @@ import com.karandaev.fieldfolio.feature.settings.dialogs.SettingsResetDataDialog
 import com.karandaev.fieldfolio.feature.settings.reset.rememberResetNotesToDefaultsAction
 import com.karandaev.fieldfolio.feature.settings.state.RESET_DATA_CONFIRMATION_WORD
 import java.io.IOException
+import java.util.concurrent.atomic.AtomicInteger
+import java.util.concurrent.atomic.AtomicReference
 import kotlinx.coroutines.runBlocking
 import org.junit.After
 import org.junit.Assert.*
@@ -38,7 +40,8 @@ class SettingsResetDataUiTest {
   private lateinit var library: ReportLibrary
   private var showDialog by mutableStateOf(true)
   private var resetting by mutableStateOf(false)
-  private var calls = 0
+  private val calls = AtomicInteger(0)
+  private val message = AtomicReference<String?>(null)
 
   @After
   fun close() {
@@ -64,12 +67,15 @@ class SettingsResetDataUiTest {
         val reset =
           rememberResetNotesToDefaultsAction(
             resetNotesToDefaults = {
-              calls++
+              calls.incrementAndGet()
               if (fail) throw IOException("Storage failed")
               library.resetToDefaults()
             },
             onResettingChange = { resetting = it },
             onResetSuccess = { showDialog = false },
+            // A Robolectric Compose continuation may run off the Android Looper thread.
+            // Observe notification behavior without attempting to construct a real Toast.
+            onMessage = { message.set(it) },
           )
         SettingsResetDataDialogHost(
           showDialog = showDialog,
@@ -93,13 +99,14 @@ class SettingsResetDataUiTest {
     compose.onNodeWithText("Reset", substring = false).assertIsNotEnabled()
     compose.onNode(hasSetTextAction()).performTextReplacement(" RESET ")
     compose.onNodeWithText("Reset", substring = false).assertIsEnabled()
-    compose.runOnIdle { assertEquals(0, calls) }
+    compose.runOnIdle { assertEquals(0, calls.get()) }
     compose.onNodeWithText("Reset", substring = false).performClick()
     compose.waitUntil(15000) {
       Shadows.shadowOf(Looper.getMainLooper()).idle()
-      !showDialog && !resetting
+      !showDialog && !resetting && calls.get() == 1
     }
-    assertEquals(1, calls)
+    assertEquals(1, calls.get())
+    assertEquals("Reports cleared.", message.get())
     runBlocking { assertTrue(db.libraryDao().all().isEmpty()) }
   }
 
@@ -108,14 +115,17 @@ class SettingsResetDataUiTest {
     show(fail = true)
     compose.onNode(hasSetTextAction()).performTextInput("RESET")
     compose.onNodeWithText("Reset", substring = false).performClick()
-    compose.waitForIdle()
-    compose.runOnIdle {
-      assertEquals(1, calls)
-      assertTrue(showDialog)
-      assertFalse(resetting)
+    compose.waitUntil(15000) {
+      Shadows.shadowOf(Looper.getMainLooper()).idle()
+      calls.get() == 1 && !resetting && message.get() == "Reset failed: Storage failed"
     }
+    compose.runOnIdle { assertTrue(showDialog) }
     compose.onNodeWithText("Reset", substring = false).assertIsEnabled().performClick()
-    compose.runOnIdle { assertEquals(2, calls) }
+    compose.waitUntil(15000) {
+      Shadows.shadowOf(Looper.getMainLooper()).idle()
+      calls.get() == 2 && !resetting
+    }
+    compose.runOnIdle { assertTrue(showDialog) }
     runBlocking { assertEquals(1, db.libraryDao().all().size) }
   }
 }

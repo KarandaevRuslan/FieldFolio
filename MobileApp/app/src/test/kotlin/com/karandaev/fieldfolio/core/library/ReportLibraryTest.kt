@@ -2,8 +2,8 @@ package com.karandaev.fieldfolio.core.library
 
 import android.app.Application
 import android.content.Context
-import android.database.sqlite.SQLiteDatabase
 import androidx.room.Room
+import androidx.room.RoomDatabase
 import com.karandaev.fieldfolio.core.data.local.AppDatabase
 import com.karandaev.fieldfolio.core.data.local.persisted.PersistedAppStateEntity
 import com.karandaev.fieldfolio.core.data.local.persisted.PersistedAppStateKeys
@@ -21,6 +21,7 @@ import org.junit.runner.RunWith
 import org.robolectric.RobolectricTestRunner
 import org.robolectric.RuntimeEnvironment
 import org.robolectric.annotation.Config
+import org.robolectric.annotation.SQLiteMode
 
 @RunWith(RobolectricTestRunner::class)
 @Config(sdk = [28], application = Application::class)
@@ -313,12 +314,18 @@ class ReportLibraryTest {
   }
 
   @Test
+  @SQLiteMode(SQLiteMode.Mode.NATIVE)
   fun sqliteV7MigrationPreservesIdsFullResultsAndImagesAndDoesNotReseedEmptyLibraries() =
     runBlocking {
       library.lockAll()
       db.close()
       val name = "migration-${java.util.UUID.randomUUID()}.db"
-      db = Room.databaseBuilder(context, AppDatabase::class.java, name).build()
+      // A file-backed migration test does not need WAL. On Windows Robolectric,
+      // reopening a WAL database may fail when its sidecar files are locked.
+      db =
+        Room.databaseBuilder(context, AppDatabase::class.java, name)
+          .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
+          .build()
       val full = DefaultInspectionReportsSeed.create().first()
       val id = db.inspectionReportDao().insert(full.copy(report = full.report.copy(id = 42)))
       val image =
@@ -326,19 +333,16 @@ class ReportLibraryTest {
           parentFile!!.mkdirs()
           writeBytes(byteArrayOf(8, 9))
         }
+      // Downgrade the schema on the existing open connection, avoiding a second
+      // SQLiteDatabase connection and WAL journal-mode reconfiguration.
+      val sql = db.openHelper.writableDatabase
+      sql.execSQL("DROP TABLE report_library_nodes")
+      sql.execSQL("DROP TABLE report_library_state")
+      sql.version = 7
       db.close()
-      SQLiteDatabase.openDatabase(
-          context.getDatabasePath(name).absolutePath,
-          null,
-          SQLiteDatabase.OPEN_READWRITE,
-        )
-        .use { sql ->
-          sql.execSQL("DROP TABLE report_library_nodes")
-          sql.execSQL("DROP TABLE report_library_state")
-          sql.version = 7
-        }
       db =
         Room.databaseBuilder(context, AppDatabase::class.java, name)
+          .setJournalMode(RoomDatabase.JournalMode.TRUNCATE)
           .addMigrations(AppDatabase.MIGRATION_7_8, AppDatabase.MIGRATION_8_9)
           .build()
       library = ReportLibrary(context, db, MoshiFactory.create())
