@@ -13,7 +13,7 @@
 | Node | 22.16.0 in CI; Vite requires a supported modern Node runtime |
 | Python | 3.10+ for repository checks, test SDK bootstrap and source exports |
 
-Open the repository root in Android Studio. Install the SDK platform/build tools with SDK Manager
+Open `MobileApp/` as the project in Android Studio. Install the SDK platform/build tools with SDK Manager
 and let the IDE create `local.properties`; it is deliberately absent from the source distribution.
 Keep your existing Firebase configuration/signing files locally when replacing an older checkout.
 The package name/application ID has not changed.
@@ -52,8 +52,8 @@ not need Node for an unchanged frontend. Do not hand-edit the generated asset di
 
 ## Signed releases
 
-Use a real Firebase configuration. Either copy `config/keystore.properties.example` to root
-`keystore.properties` and replace its values locally, or set:
+Use a real Firebase configuration. Either copy `config/keystore.properties.example` to
+`config/keystore.properties` and replace its values locally, or set:
 
 - `FIELDFOLIO_STORE_FILE` — absolute path to the signing keystore.
 - `FIELDFOLIO_STORE_PASSWORD`.

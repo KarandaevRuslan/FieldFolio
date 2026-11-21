@@ -3,11 +3,10 @@
 ## 1. Preserve identity and stored data
 
 **Decision:** keep application ID `com.karandaev.fieldfolio`, Room version 9, archive formats,
-logical/display-name semantics and existing migration paths during structural cleanup.
+logical/display-name semantics and explicit migration paths.
 
-**Reason:** a package cleanup must not install as a different app, abandon stored reports or
-make an archive depend on an installed imported model. The exported Room schema supports future
-reviews. No database or packet migration is introduced solely for this refactor.
+**Reason:** updates must preserve access to existing reports. The exported Room schema supports
+migration review, and saved result snapshots remain independent of an installed imported model.
 
 ## 2. Enforce packages before multiplying Gradle modules
 
@@ -27,7 +26,7 @@ rendering by responsibility.
 
 **Reason:** introducing an extra owner for each extracted function would duplicate drafts,
 cancellation and saved-state policy. Extraction preserves active screen-facing member contracts.
-Unused historical entry points are removed instead of retained as alternative pipelines.
+
 
 **Consequence:** internal extensions can access owner state within their package. They are not
 independent pure use cases; invariant-rich tree/name/geometry transformations remain in core.
@@ -61,15 +60,15 @@ is generated into offline help during the web build.
 input/output manifests detect stale assets. Model provenance and upstream licenses remain
 explicit rather than assigning all third-party content the root source license.
 
-## 7. Tag builds are useful without production credentials
+## 7. Verify before signing tagged releases
 
-**Decision:** a matching `v<versionName>` tag runs CI and produces a debug-signed APK artifact.
-A signed production draft release requires a separate manual run and configured protected
-environment secrets. Release tasks reject missing real Firebase/signing inputs.
+**Decision:** a matching `v<versionName>` tag runs verification, then signs a release APK with
+protected environment inputs and creates a draft GitHub Release. Publishing remains manual.
+Manual branch dispatch skips signing; manual tag dispatch can run it.
 
-**Reason:** the public source must build without private keys, while a release must not silently
-reuse a debug identity. The CI credential helper never logs secret contents or stores keys in
-the checkout. No repository publication or secret setup is performed by the source export.
+**Reason:** CI debug artifacts remain useful without private inputs. A release must use the
+intended signing identity and real Firebase configuration; missing inputs fail the release job.
+Published release assets cannot be overwritten by this workflow. See [Releasing](../RELEASING.md).
 
 ## 8. Test actual contracts and report limits
 

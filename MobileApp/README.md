@@ -30,7 +30,7 @@ See the [repository guide](../docs/README.md).
 
 ## Build a complete checkout
 
-Required: **JDK 17**, **Node 22.16+**, Android SDK **36**, build-tools **35.0.0** and Python 3.10+
+From `MobileApp/`: **JDK 17**, **Node 22.16.0**, Android SDK **36**, build-tools **35.0.0** and Python 3.10+
 for repository/CI checks. The Gradle wrapper is pinned to **8.11.1** and AGP remains **8.9.0**.
 The application ID remains `com.karandaev.fieldfolio`.
 
@@ -58,16 +58,17 @@ See [Building](docs/BUILDING.md) for setup, frontend regeneration and signing.
 | APK builds on tags and signed drafts | [Releasing](docs/RELEASING.md) |
 | Test commands and regression areas | [Testing](docs/TESTING.md) |
 | Current validation evidence | [Validation](docs/VALIDATION.md) |
+| Data ownership, archives and model adapters | [Data formats](docs/DATA_FORMATS.md), [models](docs/MODELS.md) |
 | Document / JavaScript / VFS API | [English reference](docs/api/document-en.md) |
 | Contribution and security reporting | [Contributing](CONTRIBUTING.md), [Security](SECURITY.md) |
 | Licenses and bundled model | [Third-party notices](THIRD_PARTY_NOTICES.md), [Model provenance](docs/MODEL_PROVENANCE.md) |
 
 ## Releases
 
-Push a tag matching the version in `gradle.properties`, for example `v2.2.0`. GitHub Actions runs
-the checks and provides a debug-signed APK plus SHA-256 checksum as an Actions artifact. An
-optional manual workflow on the tag creates a signed **draft** release using protected environment
-secrets. It does not publish a production release automatically.
+Push a `v<versionName>` tag matching `gradle.properties`. GitHub Actions runs verification,
+builds a signed release APK using the protected `release` environment and creates a draft release
+with its SHA-256 checksum. Review and publish the draft manually. Manual dispatch on a branch
+runs verification only; on a tag it can run signing. See [Releasing](docs/RELEASING.md).
 
 The Fieldfolio [MIT license](LICENSE.md) covers Fieldfolio-authored source; preserved third-party
 licenses and model provenance are documented separately.

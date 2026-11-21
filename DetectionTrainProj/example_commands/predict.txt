@@ -1,12 +1,8 @@
-.\.venv\Scripts\yolo.exe detect predict `
-  model="D:\Other\university\Works\5th semester\Team Project\DetectionTrainProj\best_models\best_stripped.pt" `
-  source="D:\Other\university\Works\5th semester\Team Project\DetectionTrainProj\test_samples" `
-  imgsz=768 `
-  conf=0.22 `
-  iou=0.7 `
-  device=0 `
-  save=True `
-  save_txt=True `
-  save_conf=True `
-  project="D:\Other\university\Works\5th semester\Team Project\DetectionTrainProj\runs\predict" `
-  name="best_stripped_test_samples_768"
+# PowerShell; working directory: DetectionTrainProj/; activate the training environment.
+# Provide sample_images with actual images.
+yolo detect predict `
+  model=./runs/road_damage_001/weights/best.pt `
+  source=./sample_images `
+  imgsz=768 conf=0.25 iou=0.45 device=0 `
+  save=True save_txt=True save_conf=True `
+  project=./runs name=predict_001 exist_ok=False

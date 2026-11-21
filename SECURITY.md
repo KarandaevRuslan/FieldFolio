@@ -1,15 +1,21 @@
-# Repository security policy
+# Security
 
-Please use GitHub private vulnerability reporting if available. Otherwise contact the
-maintainer through the profile linked in `MobileApp/README.md` before sharing exploit details.
-No unverified security email address is published.
+Report vulnerabilities privately through GitHub private vulnerability reporting when enabled,
+or contact the maintainer through [the project profile](https://github.com/KarandaevRuslan/).
+Send a minimal reproducer, affected component/version and expected impact.
 
-Never disclose signing keys, Firebase Admin service-account JSON, `google-services.json`,
-PostgreSQL credentials, TLS private keys, private reports, location histories or inference
-input data in issues or CI logs. Keep release secrets in a protected `release` environment.
+Keep signing/TLS keys, Firebase Admin credentials, database passwords, tokens, private reports,
+location histories and inference inputs out of public issues and logs. Use redacted test data.
 
-The server handles Firebase-authenticated API calls, uploaded-image validation, optional
-ClamAV scans, profile persistence, and external inference. This repository's CI compiles
-those components but **does not** assert production deployment safety or integration coverage.
-See [server configuration](Server/docs/CONFIGURATION.md) and
-[mobile security](MobileApp/SECURITY.md).
+The Android Document renderer has read-only, report-scoped resource capabilities. Hidden titles
+and visibility flags are presentation settings, not access controls. Locking revokes the active
+runtime. See [mobile security](MobileApp/SECURITY.md).
+
+The Java API authenticates protected routes and validates uploaded images. The Python worker
+has a raw image endpoint without Firebase authentication; deploy it behind the Java API or an
+appropriately restricted service boundary. `X-Forwarded-For` is read for anonymous rate-limit
+keys, so a public proxy must remove untrusted client-supplied values before forwarding.
+See [server configuration](Server/docs/CONFIGURATION.md) and [API](Server/docs/API.md).
+
+The `release` environment holds production signing inputs. Do not expose those inputs to
+untrusted pull-request code. Preserve third-party and model license terms when redistributing.

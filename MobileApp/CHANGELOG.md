@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Update setup, API, storage/model and training documentation across all workspaces.
+- Correct release/signing instructions and add documentation navigation/help checks to CI.
+
 ## 2.2.0
 
 - Replace excluded Java-era trees and historical patch/output folders with one canonical source layout.
@@ -10,4 +15,4 @@
 - Retain application ID, Room schema 9, report/archive compatibility and all current element/model adapters.
 - Export the current Room schema, restore the author-provided built-in model, and regenerate active web output only.
 - Add English architecture/build/release/security/contribution documentation and executable architecture/regression checks.
-- Add tag-triggered debug APK artifacts and an optional protected manual signed-release draft workflow.
+- Add CI debug APK artifacts and tag-triggered signed draft releases using a protected environment.

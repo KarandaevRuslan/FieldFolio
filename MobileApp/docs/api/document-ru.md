@@ -81,6 +81,11 @@ Document исполняет ячейки **Observable Notebook Kit 2.9.1** и **
 - `Folio.timer("timer", 60000)` — таймер. Методы: `start()`, `pause()`, `reset(ms)`, `snapshot()`; снимок содержит remainingMs, elapsedMs, durationMs, running и finished.
 - `Pocket` / `pocketNow` сохранены для совместимости с Pocket Notebook.
 
+
+Идентификатор таймера: 1–80 латинских букв, цифр или символов `.`, `_`, `-`.
+В контексте хранится до 64 таймеров; длительность ограничена от 1 мс до 7 дней.
+Таймер принадлежит этому runtime и не является постоянным будильником Android.
+
 <a id="vfs"></a>
 
 ## VFS только для чтения
@@ -91,13 +96,18 @@ Document исполняет ячейки **Observable Notebook Kit 2.9.1** и **
 |---|---|
 | `list(path = ".")` | Дети папки в порядке VFS |
 | `stat(path)`, `exists(path)` | Имя, id, тип, видимость, порядок, ресурсы или наличие элемента |
-| `await get(path)` / `read(path)` | Полные типизированные метаданные |
+| `await get(path)` / `await read(path)` | Полные типизированные метаданные |
 | `await text(path)` | Текст, исходник или декодированный текстовый файл |
 | `await json(path)` | JSON-файл, результат модели или данные виджета |
 | `await blob(path, role)` | Байты ресурса |
 | `url(path, role)` | Read-only URL в текущем runtime |
 | `attachment(path, role)` | FileAttachment Notebook Kit |
 | `await image(path, options)` | Изображение |
+
+`root` равен `/`; `base` — папка текущего Document; `paths` — список путей элементов отчёта.
+Методы `list`, `stat`, `exists`, `url` и `attachment` синхронные. `get`/`read`, `text`, `json`,
+`blob` и `image` возвращают Promise; используйте `await`. Манифест ограничен 1000 элементами.
+Попытка выйти за корень отчёта отклоняется.
 
 `FileAttachment("/Папка/photo.jpg")` также использует VFS. По умолчанию role = `data`. Роли моделей: `input`, `mask`, `layer-0`, `layer-1` и далее. Для аудио есть `cover`. У folder нет бинарного attachment.
 
@@ -128,7 +138,7 @@ if (song.audio.cover) {
 }
 ```
 
-Location содержит resolvedLocation или null. Clock содержит resolvedZoneId и epochMillis. Weather содержит weather из имеющегося кеша или null. Document не запускает сетевые запросы погоды и не запрашивает разрешения геолокации.
+Location содержит resolvedLocation или null. Clock содержит resolvedZoneId и epochMillis. Weather содержит weather из имеющегося кеша или null. Чтение VFS не запускает обновление погоды и не запрашивает разрешения геолокации. Доступные снимки поддерживает нативный хост, как описано ниже.
 
 Model result: boxes — рамки и confidence; layers — полигоны с rings/отверстиями и/или maskUrl пиксельной маски; scores — классификация; values — регрессия/числа и единицы; text — текстовый вывод. Сохраняются model/task/provider, время выполнения, inputKind/inputText/inputTruncated. Координаты — normalized-image-0-1 относительно сохранённого input; используйте его размеры для canvas-оверлея.
 
@@ -256,6 +266,11 @@ if (Folio.vfs.stat("/Analysis").assets.input) {
 - Location/Weather: `resolvedLocation` — `{latitude, longitude}` либо `null`.
 - Weather: `weather` — кешированные `{temperature, weatherCode, zoneId}` либо `null`; чтение не запрашивает погоду или разрешение геолокации.
 - Clock: `resolvedZoneId` — вычисленный IANA ID, `epochMillis` — время чтения метаданных. После проверки ID форматируйте через `Intl.DateTimeFormat(Folio.locale, {timeZone: node.resolvedZoneId, ...})`.
+
+Активный нативный хост Document подписывает необходимые отчёту источники координат/погоды,
+включая скрытые элементы с геолокацией устройства. Поэтому последующие чтения VFS могут
+получить обновлённые снимки. JavaScript не управляет провайдерами; `Folio.watch` отсутствует,
+а чтение значения не выдаёт разрешение геолокации. У встроенной справки нет погодного провайдера.
 
 Чтение VFS даёт снимок. Для постоянно меняющихся часов используйте `folioNow` в Observable-ячейке или интервал с очисткой. Не заменяйте отсутствие данных вымышленными нулевыми координатами, погодой или UTC — покажите недоступное состояние. Pull to update и редактирование нативных виджетов остаются действиями приложения.
 

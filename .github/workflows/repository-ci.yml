@@ -8,6 +8,9 @@ on:
       - '.gitattributes'
       - '.editorconfig'
       - 'docs/**'
+      - '**/*.md'
+      - 'DetectionTrainProj/example_commands/*.txt'
+      - 'Server/config/*.example.yml'
       - 'tests/**'
       - 'scripts/**'
       - 'CONTRIBUTING.md'
@@ -19,6 +22,9 @@ on:
       - '.gitattributes'
       - '.editorconfig'
       - 'docs/**'
+      - '**/*.md'
+      - 'DetectionTrainProj/example_commands/*.txt'
+      - 'Server/config/*.example.yml'
       - 'tests/**'
       - 'scripts/**'
       - 'CONTRIBUTING.md'
@@ -36,5 +42,7 @@ jobs:
           persist-credentials: false
       - name: Check tracked files, paths, docs and policies
         run: python3 scripts/check_monorepo.py
+      - name: Documentation navigation and offline help
+        run: python3 scripts/check_documentation.py
       - name: Policy regression tests
         run: python3 -m unittest discover -s tests -v

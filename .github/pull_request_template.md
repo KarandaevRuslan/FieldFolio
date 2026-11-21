@@ -5,6 +5,7 @@
 
 ## Validation actually performed
 
+- [ ] Documentation links/help sync (`python3 scripts/check_documentation.py`)
 - [ ] Repository checks
 - [ ] Android tests / build (if affected)
 - [ ] Web runtime tests (if affected)

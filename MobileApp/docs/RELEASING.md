@@ -1,97 +1,72 @@
-# GitHub Actions and APK releases
+# APK releases
 
-The workflows are stored in the **monorepo root** `.github/workflows/` and are ready to commit to a repository owned by
-[KarandaevRuslan](https://github.com/KarandaevRuslan/). Preparing them does not create a repository,
-push commits/tags, configure secrets or run GitHub Actions remotely.
+Workflows live in the repository-root `.github/workflows/`. Run the local commands below in
+`MobileApp/`, except Git commands, which may run at the repository root.
 
-## CI
+## Verification and signing
 
-`../../.github/workflows/mobile-ci.yml` runs on MobileApp changes to main, relevant pull requests, manual requests and reusable calls. It checks source
-boundaries/hygiene, repository tests, the real web runtime, frontend rebuilds, isolated Android
-regressions, lint, debug/instrumentation APK compilation, Room schema drift and Notebook Kit/Nexus
-integration. It uploads check reports and a debug APK. PR verification does not require secrets.
-Actions are pinned to commit IDs. Review and update their versions manually; automatic
-Dependabot pull requests are disabled for this repository.
+`mobile-ci.yml` verifies source policy, Python/web regressions, frontend assets, Android unit
+tests, lint and debug/device-test APK compilation. Its debug artifact is a CI build.
+`mobile-release.yml` calls that verification workflow, then builds a signed release APK for a
+tag ref and creates or updates a **draft** GitHub Release. Publishing the draft is manual.
 
-## Signed GitHub Release from a version tag (automatic)
-
-A pushed `v<versionName>` tag triggers **the signed `assembleRelease` build** and
-creates a **draft GitHub Release**, with the APK and its SHA-256 checksum. This is
-not a debug APK. The reusable mobile CI job still compiles Debug for tests; only
-the signed Release APK is attached to the GitHub Release.
-
-The job requires the GitHub environment `release` and two secrets:
-
-| Secret | Purpose |
+| Trigger | Behavior |
 |---|---|
-| `FIREBASE_CONFIG_BASE64` | Existing Base64 `google-services.json` |
-| `FIELDFOLIO_SIGNING_BUNDLE_BASE64` | Base64 ZIP of the keystore and the four signing properties |
+| Push `v*` tag | Verify, check tag/version match, sign APK, create/update draft |
+| Manual dispatch on a tag | Same signed job, using the selected tag's code/configuration |
+| Manual dispatch on a branch | Verification runs; signed job is skipped |
 
-No separate password or alias GitHub secrets are used.
+Configure the GitHub environment `release` with these secrets:
 
-To create the signing bundle locally from `MobileApp/`:
+| Secret | Contents |
+|---|---|
+| `FIREBASE_CONFIG_BASE64` | Base64 of the real `app/google-services.json` |
+| `FIELDFOLIO_SIGNING_BUNDLE_BASE64` | Base64 ZIP containing the keystore and four signing properties |
+
+Create the bundle from an existing local signing configuration:
 
 ```powershell
 python .\scripts\release\make_signing_bundle.py --properties .\config\keystore.properties --output "$env:TEMP\fieldfolio-signing.b64"
 ```
 
-Copy the **contents** of the temporary Base64 file into the environment secret
-`FIELDFOLIO_SIGNING_BUNDLE_BASE64`. Remove the local Base64 file afterwards.
-Keep the keystore private and backed up. The runner restores
-`config/keystore.properties` and `ci-signing/release-key.jks` at build time.
+Copy the file contents into the secret, then remove the temporary Base64 file. The runner
+restores `config/keystore.properties` and `ci-signing/release-key.jks`. Keep the original key
+and its credentials backed up privately; the bundle is as sensitive as the key itself.
 
-**Before tagging**, make sure these four release scripts are committed:
+## Version and tag
 
-```
-scripts/release/check_tag.py
-scripts/release/prepare_inputs.py
-scripts/release/make_signing_bundle.py
-scripts/release/create_keystore.ps1
-```
+Update `fieldfolio.versionName` and the increasing `fieldfolio.versionCode` in
+`gradle.properties`; align `acode-web/package.json` and its lockfile, and update `CHANGELOG.md`.
+Commit the version, source, generated assets and workflow helpers before tagging. Substitute
+the actual version in this example:
 
-An older `.gitignore` pattern `release/` accidentally ignored the
-`scripts/release/` source directory. It has been corrected to `/release/`.
-You can verify tracking with `git ls-files MobileApp/scripts/release` from the
-Git repository root.
-
-Update `gradle.properties` (`fieldfolio.versionName` and increasing
-`fieldfolio.versionCode`), the version in `acode-web/package.json` and
-`acode-web/package-lock.json`, and `CHANGELOG.md`. Commit and push these changes
-**before** creating a new tag. For example, if the code is `2.2.1`:
-
-```powershell
+```sh
 git push origin main
 git tag -a v2.2.1 -m "Fieldfolio 2.2.1"
 git push origin v2.2.1
 ```
 
-The workflow validates that the tag matches `fieldfolio.versionName`, runs
-mobile tests, builds a signed Release APK, verifies its signature, and uploads
-`Fieldfolio-v2.2.1.apk` plus `SHA256SUMS` to **GitHub → Releases → Drafts**.
-Review and publish the draft manually. Re-running the workflow can update an
-existing draft, but never replaces files in a published release.
+The tag must exactly match `v` plus `fieldfolio.versionName`. The workflow verifies the APK
+signature with `apksigner` and attaches `Fieldfolio-v<version>.apk` and `SHA256SUMS` to the draft.
+Review the draft and its artifacts before publishing. Re-runs can update an existing draft;
+they refuse to overwrite a published release. A later branch commit does not update an old tag.
 
-If you have **already pushed** an old `v2.2.0` tag at an older commit, pushing
-new fixes to `main` does not alter that tag. Do not silently move existing
-published tags: create a new version and tag after updating version metadata.
-You can manually re-run the workflow against a tag only if that tag's commit
-already includes the corrected scripts and workflow.
+## Local signed build
 
-Repository CI no longer rejects the intentionally tracked calibration fixture
-`DetectionTrainProj/calibration_image_sample_data_20x128x128x3_float32.npy`;
-other generated `.npy` models/data remain forbidden by the repository policy.
+Use `config/keystore.properties` with the four properties described in [Building](BUILDING.md),
+or their environment equivalents, plus a real Firebase Android configuration:
 
-## Create a new local signing identity (only if the old key is lost / never used)
+```sh
+./gradlew :app:assembleRelease
+```
 
-From `MobileApp/`, first fill in `config/keystore.properties` with your desired
-`storePassword`, `keyAlias`, and `keyPassword`. Then run:
+For an app already distributed to users, retain its signing identity. If creating the first
+identity, copy `config/keystore.properties.example` to `config/keystore.properties`, set passwords,
+alias and matching `owner`/`cn`, then run on PowerShell:
 
 ```powershell
 .\scripts\release\create_keystore.ps1
-.\gradlew.bat :app:assembleRelease
 ```
 
-The first command creates `config/release.keystore` using those exact credentials and
-updates only `storeFile` in `config/keystore.properties`. It refuses to overwrite an
-existing keystore. The signing identity cannot be recovered from the properties file
-alone. Back up the keystore separately and securely.
+This creates `config/release.keystore` and updates `storeFile`. It refuses to overwrite an
+existing key. Signing properties alone cannot recover a lost keystore.

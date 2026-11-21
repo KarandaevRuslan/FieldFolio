@@ -1,0 +1,56 @@
+# Run from Server/ using the explicit --spring.config.location command in docs/CONFIGURATION.md.
+# Local development only. Start the Python worker separately on 127.0.0.1:8000.
+spring:
+  datasource:
+    url: ${DB_URL}
+    username: ${DB_USERNAME}
+    password: ${DB_PASSWORD}
+  jpa:
+    hibernate:
+      ddl-auto: update
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 11MB
+server:
+  address: 127.0.0.1
+  port: 8080
+  ssl:
+    enabled: false
+firebase:
+  service-account: ${FIREBASE_SERVICE_ACCOUNT}
+yolo:
+  base-url: http://127.0.0.1:8000
+  detect-path: /infer
+  timeout-ms: 5000
+yolo-process:
+  enabled: false
+avatar-storage:
+  directory: ./local-data/avatars
+  public-base-url: http://127.0.0.1:8080
+image-security:
+  max-bytes: 10485760
+  max-width: 4096
+  max-height: 4096
+  max-megapixels: 20
+  allowed-formats: JPEG,PNG,WEBP
+  normalize-format: PNG
+  antivirus:
+    enabled: false
+    start-clamd: false
+rate-limit:
+  enabled: true
+  cacheTtlMinutes: 60
+  rules:
+    - id: detect
+      method: POST
+      path: /v1/detect
+      cost: 5
+      user:
+        capacity: 20
+        refillTokens: 20
+        refillPeriodSeconds: 60
+      ip:
+        capacity: 10
+        refillTokens: 10
+        refillPeriodSeconds: 60

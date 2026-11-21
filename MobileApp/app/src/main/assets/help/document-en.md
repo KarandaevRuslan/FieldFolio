@@ -81,6 +81,10 @@ JavaScript, Observable JavaScript, TypeScript, Markdown, HTML and TeX cells are 
 - `Folio.timer("timer", 60000)`: `start()`, `pause()`, `reset(ms)`, `snapshot()`. Snapshots contain remainingMs, elapsedMs, durationMs, running and finished.
 - `Pocket` and `pocketNow` remain compatibility aliases for Pocket Notebook.
 
+Timer IDs use letters, digits, `.`, `_` and `-` (1–80 characters). At most 64 timers are
+retained per context; durations are bounded to 1 ms–7 days. Timers belong to this runtime,
+not a persistent Android alarm service.
+
 <a id="vfs"></a>
 
 ## Read-only VFS
@@ -91,13 +95,18 @@ JavaScript, Observable JavaScript, TypeScript, Markdown, HTML and TeX cells are 
 |---|---|
 | `list(path = ".")` | Ordered folder children |
 | `stat(path)`, `exists(path)` | Identity/type/presentation/resources or existence |
-| `await get(path)` / `read(path)` | Complete typed metadata |
+| `await get(path)` / `await read(path)` | Complete typed metadata |
 | `await text(path)` | Text, source or decoded text file |
 | `await json(path)` | JSON file, model result or widget data |
 | `await blob(path, role)` | Resource bytes |
 | `url(path, role)` | Read-only URL for this runtime |
 | `attachment(path, role)` | Real Notebook Kit FileAttachment |
 | `await image(path, options)` | Image |
+
+`root` is `/`; `base` is the current Document folder; `paths` is the report entry-path list.
+`list`, `stat`, `exists`, `url` and `attachment` return synchronously. `get`/`read`, `text`,
+`json`, `blob` and `image` return promises; await them. The manifest is bounded at 1,000 entries.
+Paths stay inside the report; attempts to escape its root are rejected.
 
 `FileAttachment("/Folder/photo.jpg")` also reads the VFS. The default role is `data`. Model roles include `input`, `mask`, `layer-0`, `layer-1`, etc. Audio can have `cover`. Folders have no binary attachment.
 
@@ -128,7 +137,7 @@ if (song.audio.cover) {
 }
 ```
 
-Location exposes resolvedLocation or null. Clock exposes resolvedZoneId and epochMillis. Weather exposes existing cached weather or null. Documents never request location permissions or start weather network calls.
+Location exposes resolvedLocation or null. Clock exposes resolvedZoneId and epochMillis. Weather exposes existing cached weather or null. A VFS read does not request location permissions or start a weather refresh. The native host maintains available snapshots as described below.
 
 Model results include boxes/confidence; layers with polygon rings/holes and/or pixel maskUrl; classification scores; regression/numeric values with units; text outputs. Metadata preserves model/task/provider, timing, inputKind/inputText/inputTruncated. Coordinates are normalized-image-0-1, relative to the saved input. Use its image dimensions when drawing overlays.
 
@@ -255,6 +264,11 @@ Box/polygon coordinates are normalized to 0–1 relative to the **saved analysis
 - Location/Weather: `resolvedLocation` is `{latitude, longitude}` or `null`.
 - Weather: `weather` is cached `{temperature, weatherCode, zoneId}` or `null`; it does not start a refresh or request permissions.
 - Clock: `resolvedZoneId` is the resolved IANA ID, and `epochMillis` is the metadata-read timestamp. Format with `Intl.DateTimeFormat(Folio.locale, {timeZone: node.resolvedZoneId, ...})` after checking the ID.
+
+An active native Document host subscribes to the report's required device location/weather
+resources, including hidden device-based elements. Later VFS reads can therefore see updated
+snapshots. JavaScript does not directly control providers; there is no `Folio.watch` API and
+reading a value does not grant location permission. Offline Help has no weather provider.
 
 The VFS read is a snapshot. For a continuously changing display use `folioNow` in an Observable cell or a cleaned-up interval. Do not invent zero coordinates, weather or UTC when a resolved value is absent; show an unavailable state. Pull to update and native widget editing remain app actions.
 

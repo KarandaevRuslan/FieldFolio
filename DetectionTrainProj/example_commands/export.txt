@@ -1,8 +1,7 @@
-.\.venv\Scripts\yolo.exe export `
-  model="D:\Other\university\Works\5th semester\Team Project\DetectionTrainProj\best_models\best.pt" `
-  format=tflite `
-  imgsz=640 `
-  int8=True `
-  data="D:\Other\university\Works\5th semester\Team Project\DetectionTrainProj\converted_to_yolo_datasets\yolo_dataset\data.yaml" `
-  fraction=0.1 `
-  nms=True
+# PowerShell; working directory: DetectionTrainProj/; use the resolved export environment.
+yolo export `
+  model=./runs/road_damage_001/weights/best.pt `
+  format=tflite imgsz=640 int8=True `
+  data=./converted_to_yolo_datasets/run_001/data.yaml `
+  fraction=0.1 nms=True
+# Inspect actual tensors/labels and test the Android decoder before deploying the output.

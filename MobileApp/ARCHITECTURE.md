@@ -1,8 +1,8 @@
 # Fieldfolio architecture
 
-Fieldfolio 2.2.0 has one Android Gradle module (`:app`) and one npm/Vite workspace (`acode-web`).
+Fieldfolio has one Android Gradle module (`:app`) and one npm/Vite workspace (`acode-web`).
 Android responsibilities are enforced through packages and executable source-boundary checks.
-This is not a claim that the project has independent Gradle feature modules or a pure domain-only UI.
+The package rules apply within that single Android module.
 
 ## Ownership and dependency direction
 
@@ -44,8 +44,8 @@ staging, runtime capabilities, persistence and cancellation-safe ZIP exports. Th
 same ViewModel scope and state; they are not detached global services.
 
 The same facade/operation pattern separates authentication credential/session/account/avatar
-work and settings dialog/persistence/server-validation work. Moving code never introduces a new
-coroutine owner or a second copy of mutable state. Existing factory and UI method signatures remain.
+work and settings dialog/persistence/server-validation work. These operation groups share their owner
+and mutable state; they do not construct independent screen sessions.
 
 ## Data invariants
 
@@ -60,8 +60,8 @@ coroutine owner or a second copy of mutable state. Existing factory and UI metho
   complete result/input/mask metadata rather than a live dependency on an imported model.
 - Report archives may be protected; selected element/subtree and standalone analysis exports
   are plain ZIP snapshots. Widget exports use available snapshots, not surprise permission/network calls.
-- Room stays at schema **9**; this refactor does not change on-disk tables or the application ID.
-  The current schema is exported under `app/schemas` for future migration review.
+- Room uses schema **9** with explicit migrations. The current schema is exported under
+  `app/schemas` for migration review.
 
 ## Web trust boundary
 

@@ -1,37 +1,21 @@
 digraph Fieldfolio {
-  graph [rankdir=LR, bgcolor="white", pad="0.28", nodesep="0.30", ranksep="0.67",
-         splines=polyline, fontname="Arial", fontsize=15];
-  node  [shape=box, style="rounded,filled", fillcolor="#eff6ff", color="#7196c5",
-         fontcolor="#17345b", fontname="Arial", fontsize=12, margin="0.20,0.12", penwidth=1.25];
-  edge  [color="#7590aa", arrowsize=0.75, penwidth=1.4, fontname="Arial",
-         fontsize=10, fontcolor="#405b75"];
-  Worker [label="Android user", fillcolor="#f7f9fc", color="#b8c5d4"];
-  Mobile [label="Fieldfolio Android\nJetpack Compose", fillcolor="#dceaff", color="#3875c0", penwidth=1.8];
-  Local [label="Local reports\nRoom + file storage", fillcolor="#edf8f0", color="#76ad83"];
-  Doc [label="Isolated\nDocument WebView", fillcolor="#edf8f0", color="#76ad83"];
-  TFLite [label="On-device\nTFLite detection", fillcolor="#edf8f0", color="#76ad83"];
-  Firebase [label="Firebase\nAuthentication", fillcolor="#fff4e0", color="#e0ad54"];
-  API [label="Spring Boot\nServer", fillcolor="#e9e5ff", color="#8e78c9"];
-  Token [label="Firebase Admin\nID token validation", fillcolor="#e9e5ff", color="#8e78c9"];
-  Guard [label="Rate limits +\nimage validation", fillcolor="#e9e5ff", color="#8e78c9"];
-  AV [label="ClamAV\n(if enabled)", fillcolor="#e9e5ff", color="#8e78c9"];
-  YOLO [label="Python YOLO\nHTTP /infer", fillcolor="#e9e5ff", color="#8e78c9"];
-  DB [label="PostgreSQL\nprofiles", fillcolor="#fdf2f8", color="#c084a1"];
-  Files [label="Avatar\nfile storage", fillcolor="#fdf2f8", color="#c084a1"];
-  Train [label="DetectionTrainProj\ntraining", fillcolor="#f7f9fc", color="#b8c5d4"];
-
-  Worker -> Mobile;
-  Mobile -> Local;
-  Mobile -> Doc;
-  Mobile -> TFLite;
-  Mobile -> Firebase;
-  Mobile -> API [label="HTTPS + ID token"];
-  API -> Token;
-  API -> Guard;
-  Guard -> AV;
-  Guard -> YOLO;
-  API -> DB;
-  API -> Files;
-  Train -> YOLO [style=dashed, label="model export\n(deployment-specific)"];
-  {rank=same; Local; Doc; TFLite; Firebase; API}
+graph [rankdir=TB, bgcolor="white", pad="0.25", nodesep="0.30", ranksep="0.48", fontname="DejaVu Sans"];
+node [shape=box, style="rounded,filled", fillcolor="#edf5ff", color="#6082ad", fontname="DejaVu Sans", fontsize=11, margin="0.16,0.10"];
+edge [color="#536c88", fontname="DejaVu Sans", fontsize=10, arrowsize=0.7];
+Session [label="Unlocked report session",fillcolor="#d8e8ff"];
+Edit [label="Native editor / DocumentViewModel\nDraft + resource ownership"];
+Acode [label="Trusted Acode host\nEditorBridge"];
+Save [label="ReportLibrary\nValidated packet + transaction"];
+View [label="Document viewer host"];
+Context [label="DocumentAccessContext\nReport snapshots + scoped resources"];
+Notebook [label="Sandboxed Notebook Kit / Nexus\nNo native editor bridge"];
+Coordinator [label="ResourceCoordinator\nShared GPS / weather cache"];
+Session -> Edit; Session -> View;
+Edit -> Acode [label="source editing"];
+Acode -> Edit [label="save source"];
+Edit -> Save [label="save report"];
+View -> Context;
+Context -> Notebook [label="read-only capabilities"];
+View -> Coordinator [label="native subscriptions"];
+Coordinator -> Context [label="available snapshots"];
 }

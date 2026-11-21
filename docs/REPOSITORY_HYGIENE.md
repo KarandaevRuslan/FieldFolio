@@ -1,31 +1,30 @@
-# Git hygiene and sensitive files
+# Repository hygiene
 
-The root `.gitignore` controls **all three subprojects**. Nested
-`MobileApp/.gitignore` and `Server/.gitignore` add local project-specific rules.
-Patterns now cover downloaded archives (`*.zip`, `*.7z`, `*.rar`, tarballs), patch files,
-IDEs, Gradle/Maven/Python/Node caches, generated ML artifacts, TLS/signing material,
-Firebase credentials, YOLO outputs and local runtime data.
+Keep source, tests, dependency locks, approved fixtures and documentation in Git. Keep local
+credentials, IDE state, build outputs and training runs out of the tracked source tree.
 
-Important exceptions: `MobileApp/acode-web/vendor/*.tgz` is a required bundled dependency;
-`MobileApp/acode-web/third_party/acode/patches/*.patch` contains maintained source patches,
-checked-in ZIP test fixtures under test resource/fixture directories are allowed, and
-`MobileApp/app/src/main/assets/models/road_damage_yolo_int8.tflite` is the one allowed
-bundled on-device TensorFlow Lite model. Other exported `.tflite` files are ignored.
-`.gitignore` does **not** remove already tracked files.
+| Retain | Keep local or publish as a separate artifact |
+|---|---|
+| Root `.github/`, Gradle wrapper, source and lockfiles | `node_modules`, `.gradle`, `target`, `.venv`, `__pycache__` |
+| Current WebView output and input/output manifest | APK/AAB files, release output and exported source ZIPs |
+| Approved `road_damage_yolo_int8.tflite` asset | Other `.pt`, `.onnx`, `.tflite`, model/run outputs |
+| Named calibration fixture allowed by policy | Datasets, arbitrary `.npy`/`.npz`, local experiment samples |
+| Vendor Nexus `.tgz`, maintained Acode patches and test fixtures | Unrelated downloaded archives and patch bundles |
+| Example configuration without credentials | Firebase JSON, real application.yml, signing/TLS keys, passwords |
 
-```powershell
-# Run at Team Project root to inspect ignored/untracked data without deleting anything:
+`python3 scripts/check_monorepo.py` implements root tracked-file rules.
+`MobileApp/scripts/check_repository.py` implements the mobile source-export inventory.
+`.gitignore` prevents new accidental additions; it does not remove existing tracked files.
+
+```sh
 git status --short --ignored
-
 git check-ignore -v -- MobileApp/Fieldfolio-source.zip
-# If a generated archive is already tracked, remove it from the index only:
-git rm --cached -- MobileApp/Fieldfolio-source.zip
+git ls-files MobileApp/scripts/release
 ```
 
-Review `git ls-files` for any previously committed credentials, archives, datasets or
-certificates; `git rm --cached` stops future tracking but does **not** erase past Git history.
-If secrets were committed, revoke/rotate them and coordinate a history cleanup separately.
-Do not run `git clean -fdx`, `git reset --hard`, or mass `git rm` to install this package.
+If a generated file is already tracked, review it and use `git rm --cached -- <path>` to
+stop tracking while preserving the local file. This does not erase repository history.
+Revoke exposed credentials separately. Avoid bulk deletion commands when applying documentation.
 
-The [root README](../README.md) describes the application and links to the
-[repository documentation](README.md).
+The diagnostic inventories `scripts/items_list.txt` and the dataset listings under
+`DetectionTrainProj/struct_info/` are captured listings, not current build or deployment contracts.

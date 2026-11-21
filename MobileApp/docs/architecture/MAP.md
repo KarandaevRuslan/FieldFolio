@@ -82,7 +82,7 @@ but cannot import editor entry points, privileged host modules or `NativeEditor`
 | `scripts/release/` | Version/tag matching and scoped release credential preparation |
 | `tests/` | Python architecture mutation tests and release/distribution contracts |
 | `../.github/workflows/mobile-ci.yml` | Monorepo-root workflow: source/web checks, Android tests, lint and debug APK |
-| `../.github/workflows/mobile-release.yml` | Monorepo-root workflow: tagged APK and optional manually requested signed draft |
+| `../.github/workflows/mobile-release.yml` | Monorepo-root workflow: verification followed by signed release APK and draft for tag refs |
 | `app/schemas/` | Room schema snapshots, currently version 9 |
 
 For tradeoffs see [Decisions](DECISIONS.md); for measured checks see [Validation](../VALIDATION.md).

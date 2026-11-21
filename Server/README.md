@@ -1,30 +1,43 @@
 # Fieldfolio Server
 
-Java 17 / Spring Boot 3.3.2 / Maven HTTP backend. Source entry:
-`src/main/java/com/karandaev/roadCrackDetectionServer/App.java`.
+The backend combines a Java 17 / Spring Boot 3.3.2 API and a separate FastAPI YOLO worker.
+Java handles Firebase authentication, profile/avatar storage, upload validation and rate
+limits. The worker runs `best_models/best.pt` and returns detections.
 
-## Main features
-
-- `GET /public/health`: public readiness-shaped response (not proof that the database/YOLO is healthy).
-- `POST /v1/detect`: multipart `file` upload; image safety checks, normalization and
-  HTTP forwarding to the configured YOLO inference service (`/infer` by default).
-- `GET /v1/me`: authenticated Firebase principal information.
-- `GET/POST/DELETE /v1/profile/avatar`: authenticated avatar management.
-- `/v1/**` requires a Firebase-authenticated, email-verified user; rate limiting is
-  configured in Spring Security. The server may use PostgreSQL for profile persistence.
+| Process | Entry point | Default example address |
+|---|---|---|
+| Java API | `src/main/java/com/karandaev/roadCrackDetectionServer/App.java` | `https://localhost:8443` in the stripped template |
+| Python worker | `python-yolo/app.py` | `http://127.0.0.1:8000` |
 
 ## Build
 
+From `Server/`:
+
 ```sh
 mvn -B -ntp verify
-# Requires local credentials and dependent services to actually run:
+```
+
+Use an installed Maven; this project has no Maven wrapper. There is currently no `src/test`
+suite. Packaging does not initialize the runtime dependencies.
+
+## Run
+
+1. Prepare PostgreSQL and a Firebase Admin service account for the same project as the client.
+2. Set up the [Python worker](python-yolo/README.md), including its weights and environment.
+3. Configure [application settings](docs/CONFIGURATION.md). Choose external or Java-managed
+   worker operation, and configure TLS/ClamAV as required.
+4. Start Java with the selected local configuration, then check the [API requests](docs/API.md).
+
+```sh
 mvn spring-boot:run
 ```
 
-`Server.zip` did not contain a Maven wrapper, tests, an operational `application.yml`,
-or the `python-yolo` runtime. Consequently `verify` checks compilation and packaging, **not**
-end-to-end inference or authentication. CI intentionally does not launch Spring Boot.
+This command reads the normal Spring configuration. A local example and explicit invocation
+are documented in [CONFIGURATION.md](docs/CONFIGURATION.md).
 
-- [Server architecture](docs/ARCHITECTURE.md)
-- [Local configuration, services and security](docs/CONFIGURATION.md)
-- [Monorepo overview](../docs/README.md)
+- [Architecture](docs/ARCHITECTURE.md)
+- [Configuration](docs/CONFIGURATION.md)
+- [HTTP API](docs/API.md)
+- [TLS and local certificates](docs/TLS.md)
+- [Tests and smoke checks](docs/TESTING.md)
+- [Repository guide](../docs/README.md)

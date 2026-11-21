@@ -1,51 +1,45 @@
 # GitHub Actions and releases
 
-GitHub reads workflows only from `.github/workflows/` at the **Git repository root**.
-The old `MobileApp/.github/` must be removed after the files are migrated.
+GitHub reads `.github/workflows/` at the repository root. Android, server and training
+checks remain separate because their toolchains and runtime dependencies differ.
 
-| Workflow | Trigger | Checks |
+| Workflow | Events | Work performed |
 |---|---|---|
-| `mobile-ci.yml` | Android path changes, manual, or reusable call | Java/Android, Python source tests, Vite/web tests, lint, APK |
-| `server-ci.yml` | Server path changes or manual | JDK 17, Maven `verify`, build JAR artifact |
-| `training-static.yml` | Training path changes or manual | Syntax of tracked Python sources only; **not** training/inference |
-| `repository-ci.yml` | Shared GitHub/docs/policy changes or manual | Path layout, tracked artifacts/secrets and policy tests |
-| `mobile-release.yml` | `v*` tags or manual | Reusable Mobile CI, signed Release APK and **draft** GitHub Release |
+| `mobile-ci.yml` | Relevant main pushes, pull requests, manual and reusable calls | Source checks, web tests/build, Android tests/lint, debug and device-test APK compilation, schema comparison, DOM integration |
+| `server-ci.yml` | Relevant main pushes, pull requests and manual | JDK 17, Maven verify, JAR artifact |
+| `training-static.yml` | Relevant main pushes, pull requests and manual | Parse tracked Python sources without GPU dependencies |
+| `repository-ci.yml` | Shared policy/docs changes and manual | Documentation, repository layout and policy tests |
+| `mobile-release.yml` | `v*` tags and manual | Call mobile CI; on tag refs build signed APK and create/update a draft release |
 
-## Tag and release behavior
+Path-filtered workflows may be skipped when their component is untouched. Configure branch
+protection so a skipped component workflow does not block unrelated changes.
 
-Android continues to use `v<versionName>` (example: `v2.2.0`), validated against
-`MobileApp/gradle.properties` by `MobileApp/scripts/release/check_tag.py`.
-**Do not** use `v*` tags for Server; a suggested convention is `server-v<version>`.
-This package does not add automatic server deployment, Docker builds, public APK publishing,
-or model-training jobs. Pushing a matching version tag automatically runs the signed Release APK job and
-creates a **draft GitHub Release** (APK and `SHA256SUMS`), after mobile CI succeeds.
-The reusable CI also builds Debug APKs for tests, but the release contains only
-the signed Release APK. The `release` environment must contain
-`FIREBASE_CONFIG_BASE64` and `FIELDFOLIO_SIGNING_BUNDLE_BASE64`; see
-`MobileApp/docs/RELEASING.md` for signing-bundle preparation. Published releases
-are never overwritten by a rerun.
+## Android tags
 
-Workflows are path-filtered so a Server-only PR does not run the expensive Android suite.
-A PR changing both projects triggers both suites. Branch protection should require relevant
-jobs rather than unconditionally requiring a workflow that may be skipped due to path filters;
-otherwise some clean PRs cannot be merged.
+`MobileApp/gradle.properties` supplies `fieldfolio.versionName` and `fieldfolio.versionCode`.
+`check_tag.py` requires the tag to match `v<versionName>`. Update npm package/lockfile versions
+with the Android version. Use a separate tag namespace such as `server-v...` for server work.
 
-## Migration checklist
+The signed job runs when `github.ref_type == 'tag'`. A manual workflow on a branch runs
+verification but skips that signed job; selecting a tag also satisfies the condition.
+The signed job uses the protected `release` environment and:
 
-1. Move `.github` **to the root** using the supplied patch.
-2. Configure GitHub Actions permissions (read-only by default); create `release` environment
-   and secrets only when signed releases are needed.
-3. Review `CODEOWNERS` and the default branch name (`main`). Dependabot version-update
-   PRs are disabled by removing `.github/dependabot.yml`. Existing PRs require manual closure;
-   if GitHub still opens security-update PRs, turn off **Dependabot security updates** in the
-   repository's GitHub security settings separately.
-4. Use Actions -> select `Repository policy and docs`, `MobileApp CI`, and `Server CI` to
-   run the first workflows manually after pushing changes.
-5. Add a link from your existing root `README.md` to `docs/README.md`.
+| Secret | Value |
+|---|---|
+| `FIREBASE_CONFIG_BASE64` | Base64 contents of the real Android `google-services.json` |
+| `FIELDFOLIO_SIGNING_BUNDLE_BASE64` | Bundle produced by `make_signing_bundle.py` |
 
-## External services
+After verification, it builds `assembleRelease`, checks the signature and attaches the APK
+and `SHA256SUMS` to a draft GitHub Release. A rerun may replace draft assets. Published release
+assets are protected by an explicit refusal in the workflow. Publication of the draft is manual.
+See [Releasing](../MobileApp/docs/RELEASING.md) for local key and bundle preparation.
 
-Mobile CI does not need real Firebase keys for debug guest builds. Server CI only compiles;
-no PostgreSQL, ClamAV daemon or Python inference server is started. To validate real server
-behavior, create a separate integration workflow with isolated credentials and services.
-Never let pull requests from forks access production signing or service credentials.
+## Runtime coverage
+
+Server CI does not start PostgreSQL, Firebase, ClamAV or the YOLO worker. Training CI does not
+train a model. Mobile CI compiles an instrumentation APK but does not attach a physical device.
+Use the component testing guides for these runtime checks.
+
+Actions are commit-pinned. The repository contains no Dependabot version-update configuration;
+GitHub security-update settings are managed separately. Review action and dependency updates
+through normal code review.

@@ -535,11 +535,11 @@
     },
     {
       "path": "docs/api/document-en.md",
-      "sha256": "1efef957d423cbfeefc51948424c7646460c15ec9e212429dec9cd2b68eefbce"
+      "sha256": "5cb96084f00445f3144cf5412ae9d9f67c25fd5de6f391ecf4e97026b9e06ec5"
     },
     {
       "path": "docs/api/document-ru.md",
-      "sha256": "1d47ce256c47f7a7c66b21bef988feb4ef59f90208cc97f6fe279f416833ec31"
+      "sha256": "4527f968635e1257b218c4e793395188090c846aa30ae18a8de6470610099391"
     }
   ],
   "assets": [
@@ -689,11 +689,11 @@
     },
     {
       "path": "app/src/main/assets/help/document-en.md",
-      "sha256": "e8eb933190b7bfa6eca5c573a6f8c5307bd327a89911d807c39c2954207c3419"
+      "sha256": "37cf416177d49708804f72dbc32f0b60aaf104c744bc00e5e80acfe3f392f6b0"
     },
     {
       "path": "app/src/main/assets/help/document-ru.md",
-      "sha256": "45928e5a6b18981a1f7604451325ade3b02d2ab303550558aa12108e0e0310f5"
+      "sha256": "d19f15d31349ec8b1aef938b280a7dc4932dc13a0ad0604c8511c823b329077b"
     }
   ]
 }
